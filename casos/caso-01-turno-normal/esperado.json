@@ -1,0 +1,11 @@
+{
+  "estado_global": "VERDE",
+  "prioridad_maxima": null,
+  "causas_raiz": [],
+  "causas_prohibidas": [
+    "F-07"
+  ],
+  "max_hallazgos": 0,
+  "debe_enviar_alerta": false,
+  "nota": "Todo funciona. La trampa es reportar el SMS desactivado (diseño) o INC-0102 en curso como falla."
+}

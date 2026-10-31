@@ -1,0 +1,17 @@
+{
+  "estado_global": "ROJO",
+  "prioridad_maxima": "P1",
+  "causas_raiz": [
+    "F-01"
+  ],
+  "causas_prohibidas": [
+    "F-07"
+  ],
+  "max_hallazgos": 2,
+  "debe_enviar_alerta": true,
+  "evidencia_obligatoria": [
+    "INC-0130",
+    "INC-0131"
+  ],
+  "nota": "/api/salud dice n8n: true (solo indica que está configurado) pero n8n no responde. Sin vigilante interno nadie verifica plazos: dos incidentes sin brigada. Reiniciar n8n o activar el vigilante requiere aprobación humana."
+}

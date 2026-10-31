@@ -1,0 +1,125 @@
+{
+  "ventana": {
+    "id": "V-20261105-1900",
+    "desde": "2026-11-05T19:00:00Z",
+    "hasta": "2026-11-05T19:30:00Z",
+    "entorno": "piloto",
+    "descripcion": "Turno de la noche."
+  },
+  "config": {
+    "n8n_configurado": true,
+    "sms_habilitado": false,
+    "telegram_demo": true,
+    "vigilante_sla": false,
+    "public_base_url": "https://arkof-piloto.ngrok-free.app",
+    "sla_demo_min": null
+  },
+  "salud": {
+    "ok": true,
+    "n8n": true
+  },
+  "incidentes": [
+    {
+      "codigo": "INC-0130",
+      "tipo": "DERRAME_HIDROCARBURO",
+      "nivel": 2,
+      "municipio": "Acacías",
+      "estado": "notificado",
+      "reportado_en": "2026-11-05T19:12:00Z",
+      "notificado_en": "2026-11-05T19:12:00Z",
+      "sla_minutos": 5
+    },
+    {
+      "codigo": "INC-0131",
+      "tipo": "FUGA_GAS",
+      "nivel": 1,
+      "municipio": "Granada",
+      "estado": "notificado",
+      "reportado_en": "2026-11-05T19:21:30Z",
+      "notificado_en": "2026-11-05T19:21:30Z",
+      "sla_minutos": 5
+    }
+  ],
+  "bandeja": [
+    {
+      "id": "B-501",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0130",
+      "emitido_en": "2026-11-05T19:12:00Z",
+      "canal": "simulación (n8n no respondió)",
+      "error_n8n": "HTTPConnectionPool(host='localhost', port=5678): Max retries exceeded with url: /webhook/arkof-despacho (Caused by NewConnectionError: [Errno 111] Connection refused)",
+      "destinatarios": 5,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/Xk3_9fQa2LmZ",
+        "https://arkof-piloto.ngrok-free.app/confirmar/pR7_bN2cWq8T",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Hd4_zY6uVe1K",
+        "https://arkof-piloto.ngrok-free.app/confirmar/mJ9_tS3oLx5A",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Qa1_wE5rTy7U"
+      ]
+    },
+    {
+      "id": "B-502",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0131",
+      "emitido_en": "2026-11-05T19:21:30Z",
+      "canal": "simulación (n8n no respondió)",
+      "error_n8n": "HTTPConnectionPool(host='localhost', port=5678): Max retries exceeded with url: /webhook/arkof-despacho (Caused by NewConnectionError: [Errno 111] Connection refused)",
+      "destinatarios": 2,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/Zc8_vB4nMk2P",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Xk3_9fQa2LmZ"
+      ]
+    }
+  ],
+  "ejecuciones_n8n": [],
+  "bitacora": [
+    {
+      "id": "EV-1301",
+      "incidente": "INC-0130",
+      "momento": "2026-11-05T19:12:00Z",
+      "actor": "coordinador",
+      "tipo": "REPORTE",
+      "detalle": "Reporte registrado"
+    },
+    {
+      "id": "EV-1302",
+      "incidente": "INC-0130",
+      "momento": "2026-11-05T19:12:00Z",
+      "actor": "sistema",
+      "tipo": "CLASIFICACION",
+      "detalle": "Nivel 2"
+    },
+    {
+      "id": "EV-1303",
+      "incidente": "INC-0130",
+      "momento": "2026-11-05T19:12:00Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado"
+    },
+    {
+      "id": "EV-1304",
+      "incidente": "INC-0131",
+      "momento": "2026-11-05T19:21:30Z",
+      "actor": "coordinador",
+      "tipo": "REPORTE",
+      "detalle": "Reporte registrado"
+    },
+    {
+      "id": "EV-1305",
+      "incidente": "INC-0131",
+      "momento": "2026-11-05T19:21:30Z",
+      "actor": "sistema",
+      "tipo": "CLASIFICACION",
+      "detalle": "Nivel 1"
+    },
+    {
+      "id": "EV-1306",
+      "incidente": "INC-0131",
+      "momento": "2026-11-05T19:21:30Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado"
+    }
+  ]
+}

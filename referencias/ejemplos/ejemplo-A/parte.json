@@ -1,0 +1,27 @@
+{
+  "parte_id": "P-V-20261028-1100",
+  "ventana_id": "V-20261028-1100",
+  "ventana_archivo": "referencias/ejemplos/ejemplo-A/ventana.json",
+  "generado_en": "2026-10-28T11:15:30Z",
+  "estado_global": "AMARILLO",
+  "prioridad_maxima": "P3",
+  "detectores_disparados": ["D6"],
+  "hallazgos": [
+    {
+      "causa_catalogo": "F-04",
+      "prioridad": "P3",
+      "resumen": "El mensaje de Telegram (canal de demostración) al brigadista de INC-0090 fue rechazado por formato. El correo, canal de producción, sí entregó y la brigada confirmó en 3 min.",
+      "evidencia": ["E-6901", "INC-0090"],
+      "impacto": "Ninguno sobre la atención: Telegram no es canal de producción.",
+      "accion_recomendada": "Revisar que el nodo de Telegram al brigadista siga configurado con parse_mode HTML (corrección ya documentada en el CLAUDE.md del repositorio). Requiere que el administrador edite el flujo.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    }
+  ],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado hasta contratar el plan pago de Twilio; no es una falla."}
+  ],
+  "alerta_coordinador": {"enviar": false, "canal_sugerido": null, "texto": ""},
+  "para_resumen_semanal": ["F-04 en E-6901: Telegram de demostración rechazó el formato."],
+  "revision": {"revisor": null, "veredicto": "NO_REQUERIDA", "archivo": null}
+}

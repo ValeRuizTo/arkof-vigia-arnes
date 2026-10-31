@@ -1,0 +1,276 @@
+{
+  "ventana": {
+    "id": "V-20261103-1000",
+    "desde": "2026-11-03T10:00:00Z",
+    "hasta": "2026-11-03T10:30:00Z",
+    "entorno": "piloto",
+    "descripcion": "Después de reinstalar n8n en el servidor del piloto."
+  },
+  "config": {
+    "n8n_configurado": true,
+    "sms_habilitado": false,
+    "telegram_demo": true,
+    "vigilante_sla": false,
+    "public_base_url": "https://arkof-piloto.ngrok-free.app",
+    "sla_demo_min": null
+  },
+  "salud": {
+    "ok": true,
+    "n8n": true
+  },
+  "incidentes": [
+    {
+      "codigo": "INC-0110",
+      "tipo": "DERRAME_HIDROCARBURO",
+      "nivel": 2,
+      "municipio": "Castilla La Nueva",
+      "estado": "notificado",
+      "reportado_en": "2026-11-03T10:12:00Z",
+      "notificado_en": "2026-11-03T10:12:00Z",
+      "sla_minutos": 5
+    },
+    {
+      "codigo": "INC-0111",
+      "tipo": "DERRAME_HIDROCARBURO",
+      "nivel": 1,
+      "municipio": "Villavicencio",
+      "estado": "confirmado",
+      "reportado_en": "2026-11-03T10:20:00Z",
+      "notificado_en": "2026-11-03T10:20:00Z",
+      "confirmado_en": "2026-11-03T10:23:00Z",
+      "sla_minutos": 5
+    }
+  ],
+  "bandeja": [
+    {
+      "id": "B-301",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0110",
+      "emitido_en": "2026-11-03T10:12:00Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 5,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/Xk3_9fQa2LmZ",
+        "https://arkof-piloto.ngrok-free.app/confirmar/pR7_bN2cWq8T",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Hd4_zY6uVe1K",
+        "https://arkof-piloto.ngrok-free.app/confirmar/mJ9_tS3oLx5A",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Qa1_wE5rTy7U"
+      ]
+    },
+    {
+      "id": "B-302",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0111",
+      "emitido_en": "2026-11-03T10:20:00Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 2,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/mJ9_tS3oLx5A",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Qa1_wE5rTy7U"
+      ]
+    },
+    {
+      "id": "B-303",
+      "evento": "confirmado",
+      "incidente_codigo": "INC-0111",
+      "emitido_en": "2026-11-03T10:23:00Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 2,
+      "enlaces": []
+    }
+  ],
+  "ejecuciones_n8n": [
+    {
+      "id": "E-7101",
+      "evento": "despacho",
+      "incidente": "INC-0110",
+      "inicio": "2026-11-03T10:12:00Z",
+      "fin": "2026-11-03T10:17:05Z",
+      "estado": "error",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-03T10:12:00Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-03T10:12:00Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-11-03T10:12:00Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "success",
+          "fin": "2026-11-03T10:12:02Z"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "success",
+          "fin": "2026-11-03T10:12:04Z"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "success",
+          "fin": "2026-11-03T10:17:05Z"
+        },
+        {
+          "nodo": "Verificar plazo en la API",
+          "estado": "error",
+          "fin": "2026-11-03T10:17:05Z",
+          "error": "401 - \"Unauthorized\" · Authorization failed - please check your credentials"
+        }
+      ]
+    },
+    {
+      "id": "E-7102",
+      "evento": "despacho",
+      "incidente": "INC-0111",
+      "inicio": "2026-11-03T10:20:00Z",
+      "fin": "2026-11-03T10:25:05Z",
+      "estado": "error",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-03T10:20:00Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-03T10:20:00Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-11-03T10:20:00Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "success",
+          "fin": "2026-11-03T10:20:02Z"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "success",
+          "fin": "2026-11-03T10:20:04Z"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "success",
+          "fin": "2026-11-03T10:25:05Z"
+        },
+        {
+          "nodo": "Verificar plazo en la API",
+          "estado": "error",
+          "fin": "2026-11-03T10:25:05Z",
+          "error": "401 - \"Unauthorized\" · Authorization failed - please check your credentials"
+        }
+      ]
+    },
+    {
+      "id": "E-7103",
+      "evento": "confirmado",
+      "incidente": "INC-0111",
+      "inicio": "2026-11-03T10:23:00Z",
+      "fin": "2026-11-03T10:23:03Z",
+      "estado": "success",
+      "nodos": [
+        {
+          "nodo": "Aviso al cliente: brigada en camino",
+          "estado": "success",
+          "fin": "2026-11-03T10:23:03Z"
+        }
+      ]
+    }
+  ],
+  "bitacora": [
+    {
+      "id": "EV-1101",
+      "incidente": "INC-0110",
+      "momento": "2026-11-03T10:12:00Z",
+      "actor": "cliente",
+      "tipo": "REPORTE",
+      "detalle": "Reporte del cliente Petro Llanos (portal)"
+    },
+    {
+      "id": "EV-1102",
+      "incidente": "INC-0110",
+      "momento": "2026-11-03T10:12:00Z",
+      "actor": "sistema",
+      "tipo": "CLASIFICACION",
+      "detalle": "Nivel 2 (≥ 5 bbl)"
+    },
+    {
+      "id": "EV-1103",
+      "incidente": "INC-0110",
+      "momento": "2026-11-03T10:12:00Z",
+      "actor": "sistema",
+      "tipo": "ASIGNACION",
+      "detalle": "1 líder y 3 técnicos + 1 por sobre-convocatoria"
+    },
+    {
+      "id": "EV-1104",
+      "incidente": "INC-0110",
+      "momento": "2026-11-03T10:12:00Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado en n8n"
+    },
+    {
+      "id": "EV-1105",
+      "incidente": "INC-0110",
+      "momento": "2026-11-03T10:14:00Z",
+      "actor": "brigadista:2",
+      "tipo": "RESPUESTA_BRIGADISTA",
+      "detalle": "Confirma (líder)"
+    },
+    {
+      "id": "EV-1106",
+      "incidente": "INC-0110",
+      "momento": "2026-11-03T10:15:00Z",
+      "actor": "brigadista:9",
+      "tipo": "RESPUESTA_BRIGADISTA",
+      "detalle": "Rechaza (técnico)"
+    },
+    {
+      "id": "EV-1107",
+      "incidente": "INC-0111",
+      "momento": "2026-11-03T10:20:00Z",
+      "actor": "coordinador",
+      "tipo": "REPORTE",
+      "detalle": "Reporte registrado"
+    },
+    {
+      "id": "EV-1108",
+      "incidente": "INC-0111",
+      "momento": "2026-11-03T10:20:00Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado en n8n"
+    },
+    {
+      "id": "EV-1109",
+      "incidente": "INC-0111",
+      "momento": "2026-11-03T10:23:00Z",
+      "actor": "sistema",
+      "tipo": "BRIGADA_CONFIRMADA",
+      "detalle": "Brigada completa"
+    }
+  ]
+}

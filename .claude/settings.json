@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python herramientas/verificar_parte.py:*)",
+      "Read(./**)",
+      "Write(./partes/**)",
+      "Write(./memoria/**)",
+      "Edit(./partes/**)",
+      "Edit(./memoria/**)"
+    ],
+    "deny": [
+      "Read(./casos/**/esperado.json)",
+      "Read(**/.env)",
+      "Edit(./CLAUDE.md)",
+      "Edit(./.claude/**)",
+      "Edit(./herramientas/**)",
+      "Edit(./referencias/**)",
+      "Edit(./casos/**)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(rm:*)",
+      "WebFetch",
+      "WebSearch"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Grep|Edit|Write|MultiEdit|NotebookEdit|WebFetch|WebSearch",
+        "hooks": [
+          { "type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/guardia.py\"" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "python \"$CLAUDE_PROJECT_DIR/.claude/hooks/verificar_al_terminar.py\"" }
+        ]
+      }
+    ]
+  }
+}

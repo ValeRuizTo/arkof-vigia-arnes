@@ -1,0 +1,380 @@
+{
+  "ventana": {
+    "id": "V-20261104-1430",
+    "desde": "2026-11-04T14:30:00Z",
+    "hasta": "2026-11-04T14:45:00Z",
+    "entorno": "piloto",
+    "descripcion": "Incidente con sustancia nociva cerca de una vereda."
+  },
+  "config": {
+    "n8n_configurado": true,
+    "sms_habilitado": false,
+    "telegram_demo": true,
+    "vigilante_sla": false,
+    "public_base_url": "https://arkof-piloto.ngrok-free.app",
+    "sla_demo_min": null
+  },
+  "salud": {
+    "ok": true,
+    "n8n": true
+  },
+  "incidentes": [
+    {
+      "codigo": "INC-0120",
+      "tipo": "SUSTANCIA_NOCIVA",
+      "nivel": 3,
+      "municipio": "Puerto Gaitán",
+      "estado": "notificado",
+      "reportado_en": "2026-11-04T14:31:00Z",
+      "notificado_en": "2026-11-04T14:31:00Z",
+      "sla_minutos": 4
+    }
+  ],
+  "bandeja": [
+    {
+      "id": "B-401",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0120",
+      "emitido_en": "2026-11-04T14:31:00Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 8,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/Xk3_9fQa2LmZ",
+        "https://arkof-piloto.ngrok-free.app/confirmar/pR7_bN2cWq8T",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Hd4_zY6uVe1K",
+        "https://arkof-piloto.ngrok-free.app/confirmar/mJ9_tS3oLx5A",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Qa1_wE5rTy7U",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Zc8_vB4nMk2P",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Xk3_9fQa2LmZ",
+        "https://arkof-piloto.ngrok-free.app/confirmar/pR7_bN2cWq8T"
+      ]
+    },
+    {
+      "id": "B-402",
+      "evento": "escalamiento",
+      "incidente_codigo": "INC-0120",
+      "emitido_en": "2026-11-04T14:35:05Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 5,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/pR7_bN2cWq8T",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Hd4_zY6uVe1K",
+        "https://arkof-piloto.ngrok-free.app/confirmar/mJ9_tS3oLx5A",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Qa1_wE5rTy7U",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Zc8_vB4nMk2P"
+      ]
+    },
+    {
+      "id": "B-403",
+      "evento": "escalamiento",
+      "incidente_codigo": "INC-0120",
+      "emitido_en": "2026-11-04T14:39:10Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 3,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/Qa1_wE5rTy7U",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Zc8_vB4nMk2P",
+        "https://arkof-piloto.ngrok-free.app/confirmar/Xk3_9fQa2LmZ"
+      ]
+    },
+    {
+      "id": "B-404",
+      "evento": "alerta_coordinador",
+      "incidente_codigo": "INC-0120",
+      "emitido_en": "2026-11-04T14:43:15Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 0,
+      "enlaces": []
+    }
+  ],
+  "ejecuciones_n8n": [
+    {
+      "id": "E-7201",
+      "evento": "despacho",
+      "incidente": "INC-0120",
+      "inicio": "2026-11-04T14:31:00Z",
+      "fin": "2026-11-04T14:35:05Z",
+      "estado": "error",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-04T14:31:00Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-04T14:31:00Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-11-04T14:31:00Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "success",
+          "fin": "2026-11-04T14:31:02Z"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "error",
+          "fin": "2026-11-04T14:31:04Z",
+          "error": "535-5.7.8 Username and Password not accepted. For more information, go to https://support.google.com/mail/?p=BadCredentials"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "success",
+          "fin": "2026-11-04T14:35:05Z"
+        },
+        {
+          "nodo": "Verificar plazo en la API",
+          "estado": "success",
+          "fin": "2026-11-04T14:35:05Z",
+          "respuesta": {
+            "accion": "reasignado"
+          }
+        }
+      ]
+    },
+    {
+      "id": "E-7202",
+      "evento": "escalamiento",
+      "incidente": "INC-0120",
+      "inicio": "2026-11-04T14:35:05Z",
+      "fin": "2026-11-04T14:39:10Z",
+      "estado": "error",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-04T14:35:05Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-04T14:35:05Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-11-04T14:35:05Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "success",
+          "fin": "2026-11-04T14:35:07Z"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "error",
+          "fin": "2026-11-04T14:35:09Z",
+          "error": "535-5.7.8 Username and Password not accepted. For more information, go to https://support.google.com/mail/?p=BadCredentials"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "success",
+          "fin": "2026-11-04T14:39:10Z"
+        },
+        {
+          "nodo": "Verificar plazo en la API",
+          "estado": "success",
+          "fin": "2026-11-04T14:39:10Z",
+          "respuesta": {
+            "accion": "reasignado"
+          }
+        }
+      ]
+    },
+    {
+      "id": "E-7203",
+      "evento": "escalamiento",
+      "incidente": "INC-0120",
+      "inicio": "2026-11-04T14:39:10Z",
+      "fin": "2026-11-04T14:43:15Z",
+      "estado": "error",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-04T14:39:10Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-04T14:39:10Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-11-04T14:39:10Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "success",
+          "fin": "2026-11-04T14:39:12Z"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "error",
+          "fin": "2026-11-04T14:39:14Z",
+          "error": "535-5.7.8 Username and Password not accepted. For more information, go to https://support.google.com/mail/?p=BadCredentials"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "success",
+          "fin": "2026-11-04T14:43:15Z"
+        },
+        {
+          "nodo": "Verificar plazo en la API",
+          "estado": "success",
+          "fin": "2026-11-04T14:43:15Z",
+          "respuesta": {
+            "accion": "escalado"
+          }
+        }
+      ]
+    },
+    {
+      "id": "E-7204",
+      "evento": "alerta_coordinador",
+      "incidente": "INC-0120",
+      "inicio": "2026-11-04T14:43:15Z",
+      "fin": "2026-11-04T14:43:19Z",
+      "estado": "error",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-04T14:43:15Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-04T14:43:15Z"
+        },
+        {
+          "nodo": "Telegram al coordinador (demostración)",
+          "estado": "success",
+          "fin": "2026-11-04T14:43:17Z"
+        },
+        {
+          "nodo": "Correo al coordinador",
+          "estado": "error",
+          "fin": "2026-11-04T14:43:19Z",
+          "error": "535-5.7.8 Username and Password not accepted. For more information, go to https://support.google.com/mail/?p=BadCredentials"
+        },
+        {
+          "nodo": "SMS al coordinador",
+          "estado": "disabled"
+        }
+      ]
+    }
+  ],
+  "bitacora": [
+    {
+      "id": "EV-1201",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:31:00Z",
+      "actor": "coordinador",
+      "tipo": "REPORTE",
+      "detalle": "Reporte del cliente AgroPalma Meta (teléfono)"
+    },
+    {
+      "id": "EV-1202",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:31:00Z",
+      "actor": "sistema",
+      "tipo": "CLASIFICACION",
+      "detalle": "Nivel 3 (sustancia peligrosa + comunidad)"
+    },
+    {
+      "id": "EV-1203",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:31:00Z",
+      "actor": "sistema",
+      "tipo": "ASIGNACION",
+      "detalle": "2 líderes y 4 técnicos + 2 por sobre-convocatoria (HAZMAT)"
+    },
+    {
+      "id": "EV-1204",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:31:00Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado en n8n"
+    },
+    {
+      "id": "EV-1205",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:33:20Z",
+      "actor": "brigadista:11",
+      "tipo": "RESPUESTA_BRIGADISTA",
+      "detalle": "Confirma (técnico) desde Telegram"
+    },
+    {
+      "id": "EV-1206",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:35:05Z",
+      "actor": "sistema",
+      "tipo": "SLA_VENCIDO",
+      "detalle": "7 asignaciones vencidas sin respuesta"
+    },
+    {
+      "id": "EV-1207",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:35:05Z",
+      "actor": "sistema",
+      "tipo": "ESCALAMIENTO",
+      "detalle": "Ronda 1: se convoca el déficit (5)"
+    },
+    {
+      "id": "EV-1208",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:39:10Z",
+      "actor": "sistema",
+      "tipo": "SLA_VENCIDO",
+      "detalle": "5 asignaciones vencidas sin respuesta"
+    },
+    {
+      "id": "EV-1209",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:39:10Z",
+      "actor": "sistema",
+      "tipo": "ESCALAMIENTO",
+      "detalle": "Ronda 2: se convoca el déficit (3)"
+    },
+    {
+      "id": "EV-1210",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:43:15Z",
+      "actor": "sistema",
+      "tipo": "SLA_VENCIDO",
+      "detalle": "3 asignaciones vencidas sin respuesta"
+    },
+    {
+      "id": "EV-1211",
+      "incidente": "INC-0120",
+      "momento": "2026-11-04T14:43:15Z",
+      "actor": "sistema",
+      "tipo": "ESCALAMIENTO_HUMANO",
+      "detalle": "Máximo de rondas de escalamiento: decide el coordinador"
+    }
+  ]
+}

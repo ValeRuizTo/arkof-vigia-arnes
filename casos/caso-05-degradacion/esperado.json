@@ -1,0 +1,14 @@
+{
+  "estado_global": "AMARILLO",
+  "prioridad_maxima": "P2",
+  "causas_raiz": [
+    "F-06",
+    "F-08"
+  ],
+  "causas_prohibidas": [
+    "F-07"
+  ],
+  "max_hallazgos": 3,
+  "debe_enviar_alerta": true,
+  "nota": "Nada está caído, pero el correo tarda 75-92 s (meta < 60 s) y los enlaces apuntan a localhost: los brigadistas confirman por el portal. El Telegram de demostración es P3. No hay P1."
+}
