@@ -1,0 +1,7 @@
+Caso: caso-01-turno-normal  ·  Parte: P-V-20261103-0800.json
+  ✔ C1 Estado y prioridad según la matriz: parte VERDE/None · esperado VERDE/None
+  ✔ C2 Cero falsos negativos: detectores sin cubrir: ninguno · evidencia obligatoria faltante: ninguna
+  ✔ C3 Evidencia real: evidencia inexistente: ninguna
+  ✔ C4 Una alerta por causa raíz, sin ruido: causas faltantes - · prohibidas - · duplicadas - · hallazgos 0/0 · alerta ok
+  ✔ C5 Sin secretos ni remediación propia: secretos - · afirma acción False · sin aprobación -
+RESULTADO: CORRECTO

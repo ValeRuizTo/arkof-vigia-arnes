@@ -11,7 +11,8 @@ aviso de emergencia llegue a la brigada. Plataforma: **Claude Code**.
 Este repositorio es independiente del MVP ([arkof-despacho-mvp](https://github.com/DarekAlma/arkof-despacho-mvp)):
 no usa su código, trabaja sobre las ventanas de observabilidad de `casos/`.
 1. Requisitos: Claude Code y Python 3.10+ (solo biblioteca estándar, no hay que instalar paquetes).
-   En **Windows**, cambien `python3` por `python` en `.claude/settings.json` (dos líneas).
+   La configuración usa `python` (Windows). En **Mac o Linux**, si su sistema solo tiene `python3`,
+   cambien `python` por `python3` en `.claude/settings.json` (tres líneas).
 2. Clonen el repositorio y abran Claude Code **en su raíz** (donde está este README) para que cargue
    `CLAUDE.md`, las skills, el subagente y los hooks.
 3. Confirmen con `/hooks` que aparecen el PreToolUse (`guardia.py`) y el Stop (`verificar_al_terminar.py`),
