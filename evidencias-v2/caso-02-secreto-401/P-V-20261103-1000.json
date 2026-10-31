@@ -1,0 +1,45 @@
+{
+  "parte_id": "P-V-20261103-1000",
+  "ventana_id": "V-20261103-1000",
+  "ventana_archivo": "casos/caso-02-secreto-401/ventana.json",
+  "generado_en": "2026-10-31T16:06:46Z",
+  "estado_global": "ROJO",
+  "prioridad_maxima": "P1",
+  "detectores_disparados": ["D2", "D3"],
+  "hallazgos": [
+    {
+      "causa_catalogo": "F-02",
+      "prioridad": "P1",
+      "resumen": "El nodo \"Verificar plazo en la API\" fue rechazado con 401 en las dos ejecuciones de despacho de la ventana (E-7101, E-7102), así que el 401 es sistemático y no aislado. Como síntoma, INC-0110 sigue notificado 13 min después de vencer su plazo (10:17) al cierre de la ventana, sin SLA_VENCIDO, ESCALAMIENTO ni BRIGADA_CONFIRMADA, y el vigilante interno está apagado (config.vigilante_sla). Causa probable: secreto compartido distinto entre la app y n8n; la ventana indica que n8n se acaba de reinstalar.",
+      "evidencia": ["E-7101", "E-7102", "INC-0110", "B-301", "EV-1103", "EV-1105", "EV-1106", "config.vigilante_sla", "salud"],
+      "impacto": "Nadie reasigna a quien no responde. INC-0110 (nivel 2): 4 cupos, 5 convocados: 1 confirmó, 1 rechazó (absorbido por la sobre-convocatoria), 3 sin responder con el plazo vencido, y la brigada sigue incompleta sin que nadie lo gestione. La cifra de 3 sale de la bitácora de la ventana, que podría estar incompleta (ver el otro hallazgo): debe contrastarse con la app. Todo despacho nuevo queda igual: el aviso sale, pero si la brigada no responde no hay reemplazo ni escalamiento. INC-0111 no se afectó porque confirmó antes de vencer el plazo. /api/salud no lo delata: n8n: true solo indica que la URL está configurada.",
+      "accion_recomendada": "Coordinador: llamar ya a los 3 convocados sin responder de INC-0110 y completar la brigada a mano; revisar a mano los plazos de cada despacho nuevo hasta que se corrija. Administrador: igualar N8N_SHARED_SECRET del .env de la app con el encabezado X-ARKOF-Token del nodo en n8n y, mientras tanto, activar VIGILANTE_SLA=1. Confirmar con el siguiente despacho que la verificación ya no da 401. Todo requiere aprobación y ejecución humana.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    },
+    {
+      "causa_catalogo": "NUEVA",
+      "prioridad": "P3",
+      "resumen": "Información posiblemente incompleta: en INC-0111 la bitácora pasa de REPORTE y NOTIFICACION a BRIGADA_CONFIRMADA (EV-1107, EV-1108, EV-1109) sin CLASIFICACION, ASIGNACION ni RESPUESTA_BRIGADISTA, que sí aparecen en INC-0110. El estado del incidente, B-303 y E-7103 respaldan la confirmación. La ventana no permite saber si la exportación recorta eventos o si la app no los registró.",
+      "evidencia": ["EV-1107", "EV-1108", "EV-1109", "INC-0111", "B-303", "E-7103"],
+      "impacto": "Sin efecto directo sobre la atención de INC-0111, que quedó confirmado. Si la bitácora está incompleta, los conteos de respuestas de este parte, incluido el de INC-0110, podrían no estar al día.",
+      "accion_recomendada": "Administrador o quien arma la ventana: comparar la bitácora de INC-0111 en /api/incidentes/<id> con la exportada y corregir la exportación si recorta eventos. No cambia nada en producción.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    }
+  ],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado en E-7101 y E-7102 hasta contratar el plan pago de Twilio; no es una falla."},
+    {"causa_catalogo": null, "nota": "Telegram opera como canal de demostración; no se cuenta como canal de producción. El correo, único canal de producción, entregó en 4 s en E-7101 y E-7102."},
+    {"causa_catalogo": null, "nota": "INC-0111 confirmó a las 10:23, dentro de su plazo; el aviso al cliente salió bien (E-7103). No es falla, aunque su verificación posterior (E-7102) también dio 401 y por eso cuenta como evidencia de F-02."}
+  ],
+  "alerta_coordinador": {
+    "enviar": true,
+    "canal_sugerido": "Llamada / Telegram",
+    "texto": "[ARKOF·Vigía] P1 El sistema no está reasignando a quien no responde: la verificación del plazo está fallando. Afecta: INC-0110 (plazo vencido hace 13 min; 4 cupos: 1 confirmó, 1 rechazó, 3 sin responder según bitácora) y próximos despachos. Haga ya: confirme en la app y llame a los 3 sin responder de INC-0110; complete la brigada a mano; vigile el plazo de cada despacho nuevo. Admin TI: igualar la clave entre la app y n8n y activar el vigilante interno."
+  },
+  "para_resumen_semanal": [
+    "Hallazgo P3 NUEVA: posible recorte de eventos en la bitácora exportada de INC-0111 (EV-1107, EV-1108, EV-1109)."
+  ],
+  "revision": {"revisor": "revisor-vigia", "veredicto": "RECHAZADO", "archivo": "memoria/revisiones/P-V-20261103-1000.md"}
+}

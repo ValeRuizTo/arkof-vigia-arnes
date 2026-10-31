@@ -1,0 +1,44 @@
+{
+  "parte_id": "P-V-20261104-1430",
+  "ventana_id": "V-20261104-1430",
+  "ventana_archivo": "casos/caso-03-correo-caido/ventana.json",
+  "generado_en": "2026-10-31T16:15:50Z",
+  "estado_global": "ROJO",
+  "prioridad_maxima": "P1",
+  "detectores_disparados": ["D4", "D8"],
+  "hallazgos": [
+    {
+      "causa_catalogo": "F-03",
+      "prioridad": "P1",
+      "resumen": "El correo, único canal de producción activo, falló con error 535 (credenciales no aceptadas) en las 4 ejecuciones: despacho (E-7201), dos escalamientos (E-7202, E-7203) y alerta al coordinador (E-7204). Falla silenciosa: la bandeja (B-401 a B-404) no registra error y la salud de la app responde ok, porque los nodos de envío no detienen el flujo.",
+      "evidencia": ["E-7201", "E-7202", "E-7203", "E-7204", "B-401", "B-402", "B-403", "B-404", "EV-1205", "EV-1206", "EV-1208", "EV-1210", "EV-1211", "INC-0120", "config.sms_habilitado"],
+      "impacto": "INC-0120 (nivel 3, sustancia nociva cerca de una vereda) sigue notificado al cierre de la ventana. 6 cupos requeridos (2 líderes y 4 técnicos): 1 técnico confirmó, 0 rechazaron, 5 cupos sin cubrir y ningún líder confirmado; 15 de 16 convocados sin responder tras 2 rondas. Quien no tiene datos móviles no recibió la convocatoria, pues Telegram es solo de demostración. El coordinador tampoco recibió el correo del escalamiento humano. Todo despacho nuevo queda expuesto a lo mismo.",
+      "accion_recomendada": "Coordinador: tomar la decisión de escalamiento humano de INC-0120 y llamar por teléfono a las brigadas para completar los cupos. Administrador: generar una nueva contraseña de aplicación de Gmail y actualizar la credencial SMTP en n8n. Vigía no ejecuta ninguna de estas acciones.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    },
+    {
+      "causa_catalogo": "NUEVA",
+      "prioridad": "P1",
+      "resumen": "La ronda 2 de INC-0120 convocó a 3 personas (EV-1209, B-403), aunque el déficit según RN-08 era 5: 6 cupos, 1 confirmado y 0 pendientes tras vencer las 5 de la ronda 1 (EV-1208). La ronda 1 sí convocó 5 (EV-1207, B-402). La caída del correo no explica la diferencia, y la ventana no registra ALERTA_RECURSOS ni SIN_REEMPLAZO_NECESARIO. La causa no está determinada: puede ser falta de personal disponible o un error en la reasignación.",
+      "evidencia": ["EV-1207", "EV-1208", "EV-1209", "B-402", "B-403", "INC-0120"],
+      "impacto": "En la ronda 2 quedaron 2 cupos de INC-0120 sin convocar. Si la reasignación convoca de menos, cualquier emergencia puede quedarse sin los reemplazos necesarios. Si no había más personal, llamar a los ya convocados puede no completar los 5 cupos faltantes. Se asigna P1 por la regla de elegir la prioridad más alta ante la duda.",
+      "accion_recomendada": "Coordinador: confirmar si hay personal disponible además de los ya convocados y, si no alcanza, buscar recursos externos. Administrador: revisar por qué la ronda 2 convocó 3 en lugar de 5 y corregir solo después de establecer la causa. Vigía no ejecuta ninguna de estas acciones.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    }
+  ],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado hasta contratar el plan pago de Twilio (config.sms_habilitado = false); no es una falla, pero deja al correo como único canal de producción."},
+    {"causa_catalogo": null, "nota": "Telegram funcionó como demostración (nodos en success y una confirmación en EV-1205); no cuenta como canal de producción ni compensa la caída del correo."}
+  ],
+  "alerta_coordinador": {
+    "enviar": true,
+    "canal_sugerido": "Llamada / Telegram",
+    "texto": "[ARKOF·Vigía] P1 Las brigadas y usted no están recibiendo el correo de convocatoria. Afecta: INC-0120 (primer plazo vencido hace 10 min; 6 cupos: 1 confirmó, 0 rechazaron, 5 sin cubrir, ningún líder) y próximos despachos. La ronda 2 convocó solo a 3 de los 5 faltantes. Haga ya: llame a las brigadas y, si no completa los cupos, busque más personal. Admin TI: renovar la contraseña del correo en n8n y revisar la ronda 2."
+  },
+  "para_resumen_semanal": [
+    "F-03 no se ve en la bandeja ni en la salud de la app (error_n8n null, salud.ok true): solo aparece en las ejecuciones de n8n."
+  ],
+  "revision": {"revisor": "revisor-vigia", "veredicto": "APROBADO", "archivo": "memoria/revisiones/P-V-20261104-1430.md"}
+}

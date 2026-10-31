@@ -1,0 +1,2 @@
+PARTE RECHAZADO tras agotar los reintentos. Requiere revisión humana.
+- Los partes con P1/P2 requieren veredicto APROBADO del subagente revisor-vigia.

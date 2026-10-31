@@ -1,0 +1,66 @@
+{
+  "parte_id": "P-V-20261106-1530",
+  "ventana_id": "V-20261106-1530",
+  "ventana_archivo": "casos/caso-05-degradacion/ventana.json",
+  "generado_en": "2026-10-31T16:30:30Z",
+  "estado_global": "AMARILLO",
+  "prioridad_maxima": "P2",
+  "detectores_disparados": ["D5", "D6", "D7"],
+  "hallazgos": [
+    {
+      "causa_catalogo": "F-06",
+      "prioridad": "P2",
+      "resumen": "El correo, único canal de producción activo, entregó tarde en los dos despachos: 92 s en INC-0140 (E-7401) y 75 s en INC-0141 (E-7402), frente a una meta de 60 s. No hubo errores: el nodo terminó en success, así que la lentitud no se ve sin medirla.",
+      "evidencia": ["E-7401", "E-7402", "INC-0140", "INC-0141"],
+      "impacto": "El aviso llega, pero se consumen más de 1 min de los 5 min de plazo antes de que el brigadista lo reciba. En INC-0140 además falló Telegram, de modo que ese correo lento fue el único mensaje que salió. Ambas brigadas quedaron completas, con solo 70 s (INC-0140) y 50 s (INC-0141) de margen antes de vencer el plazo. La causa de la lentitud (SMTP o cola de n8n) es probable según el catálogo, no está demostrada por la ventana.",
+      "accion_recomendada": "El administrador debe revisar los tiempos del servidor SMTP y la cola de n8n, y evaluar un proveedor de correo transaccional si la lentitud persiste.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    },
+    {
+      "causa_catalogo": "F-08",
+      "prioridad": "P2",
+      "resumen": "config.public_base_url apunta a una dirección local en el entorno piloto, tras cambiar de equipo el servidor de la app. Un brigadista de INC-0140 confirmó por el portal porque no pudo abrir el enlace del correo (EV-1403) y las confirmaciones de INC-0141 también llegaron por el portal (EV-1407). Los enlaces de B-601 y B-603 muestran la dirección pública del túnel, no la local, así que la configuración y los enlaces emitidos no coinciden: la ventana no permite saber si el túnel sigue vivo.",
+      "evidencia": ["config.public_base_url", "EV-1403", "EV-1404", "EV-1407", "B-601", "B-603", "INC-0140", "INC-0141"],
+      "impacto": "Un brigadista no pudo abrir el enlace (EV-1403, la única prueba directa); si le pasa a más, debe entrar al portal, lo que resta tiempo a un plazo ya reducido por la entrega lenta, y quien no alcance el portal queda sin responder al vencer el plazo. En esta ventana ambas brigadas se completaron (EV-1404, EV-1407). Cifras inferidas del glosario y de RN-07b, porque la bitácora no las detalla por persona: INC-0140, 2 cupos y 2 de 2 confirmados, suponiendo nivel 1 sin sobre-convocatoria; INC-0141, 5 convocados para 4 cupos, al menos 4 confirmados y el quinto sin dato.",
+      "accion_recomendada": "El administrador debe comprobar cuál es la URL pública vigente y probar un enlace desde un celular, actualizar PUBLIC_BASE_URL con esa URL y reiniciar la app.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    },
+    {
+      "causa_catalogo": "NUEVA",
+      "prioridad": "P2",
+      "resumen": "Los eventos 'confirmado' B-602 (15:43:50) y B-604 (15:54:10) se publicaron a n8n sin error, pero la ventana, que llega hasta las 16:00, no trae ninguna ejecución de n8n para ellos: solo E-7401 y E-7402, ambas de despacho. No hay prueba de que corriera el aviso al cliente. No está demostrado que haya fallado: puede ser una falla del flujo o un vacío de la exportación de la ventana.",
+      "evidencia": ["B-602", "B-604", "INC-0140", "INC-0141"],
+      "impacto": "No afecta la convocatoria de la brigada. Si el aviso no corrió, el cliente no se enteró de que la brigada va en camino en ninguno de los dos incidentes, y nadie lo notaría porque la bandeja solo muestra lo publicado a n8n.",
+      "accion_recomendada": "El coordinador debe confirmar con el cliente si recibió el aviso de INC-0140 e INC-0141. El administrador debe buscar esas ejecuciones en el historial de n8n y, si no existen, revisar la rama 'confirmado' del flujo; si existen, corregir la exportación de la ventana.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    },
+    {
+      "causa_catalogo": "F-04",
+      "prioridad": "P3",
+      "resumen": "Telegram (canal de demostración) rechazó por formato el mensaje de E-7401 (INC-0140). En E-7402 (INC-0141) el mismo nodo funcionó, por lo que el rechazo es intermitente y puede depender del contenido del mensaje.",
+      "evidencia": ["E-7401", "INC-0140"],
+      "impacto": "Ninguno directo sobre la atención: Telegram no es canal de producción y el correo sí entregó en E-7401.",
+      "accion_recomendada": "Revisar que el nodo de Telegram al brigadista siga configurado con parse_mode HTML. Requiere que el administrador edite el flujo.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    }
+  ],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado hasta contratar el plan pago de Twilio (nodo disabled en E-7401 y E-7402); no es una falla. Por eso el correo es el único canal de producción."},
+    {"causa_catalogo": "N/A", "nota": "INC-0140 e INC-0141 se confirmaron dentro del plazo de 5 min; la verificación de plazo respondió 'ninguna' en E-7401 y E-7402, que es lo correcto con la brigada ya completa."}
+  ],
+  "alerta_coordinador": {
+    "enviar": true,
+    "canal_sugerido": "Llamada",
+    "texto": "[ARKOF·Vigía] P2 Los avisos llegan tarde (correo a los 92 y 75 s) y al menos un enlace del correo no abrió en el celular. Las brigadas se completaron, faltando 70 y 50 s para vencer el plazo. Sin constancia del aviso al cliente. Afecta: INC-0140, INC-0141 y próximos despachos. Haga ya: indique confirmar por el portal, llame a quien no responda y verifique el aviso con el cliente. Admin TI: actualizar PUBLIC_BASE_URL, revisar lentitud del correo y flujo de aviso."
+  },
+  "para_resumen_semanal": [
+    "F-04 en E-7401: Telegram de demostración rechazó el formato; en E-7402 funcionó.",
+    "Cobertura de datos: la bitácora solo registra una RESPUESTA_BRIGADISTA (EV-1403) para 7 convocados en total, de modo que confirmados, rechazados y sin respuesta se infieren, no se leen por persona.",
+    "Criterio por fijar: ejemplo-A tiene un evento 'confirmado' sin ejecución (B-102) y no lo reporta; este parte sí lo reporta. Conviene definirlo en la matriz o el catálogo."
+  ],
+  "revision": {"revisor": "revisor-vigia", "veredicto": "APROBADO", "archivo": "memoria/revisiones/P-V-20261106-1530.md"}
+}

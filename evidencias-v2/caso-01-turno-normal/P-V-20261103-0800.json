@@ -1,0 +1,21 @@
+{
+  "parte_id": "P-V-20261103-0800",
+  "ventana_id": "V-20261103-0800",
+  "ventana_archivo": "casos/caso-01-turno-normal/ventana.json",
+  "generado_en": "2026-10-31T16:03:10Z",
+  "estado_global": "VERDE",
+  "prioridad_maxima": null,
+  "detectores_disparados": [],
+  "hallazgos": [],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado hasta contratar el plan pago de Twilio (nodos disabled en E-7001 y E-7003; config.sms_habilitado = false); no es una falla."},
+    {"causa_catalogo": "Telegram demostración", "nota": "Telegram es canal de demostración, no de producción (config.telegram_demo = true). Entregó sin errores en E-7001 y E-7003; no cuenta como cobertura de campo."},
+    {"causa_catalogo": "Incidente dentro de plazo", "nota": "INC-0102 sigue notificado y E-7003 en waiting: el plazo de 5 min vence a las 08:15:50, después del cierre de la ventana (08:15:00). 5 convocados para 4 cupos: 1 confirmó (líder, EV-1011), 0 rechazaron, 4 sin responder aún."}
+  ],
+  "alerta_coordinador": {"enviar": false, "canal_sugerido": null, "texto": ""},
+  "para_resumen_semanal": [
+    "Seguimiento en la siguiente ventana: INC-0102 debe mostrar el resultado de 'Verificar plazo en la API' en E-7003 (vence 08:15:50; límite con margen 08:18:50). Con config.vigilante_sla = false, ese nodo es el único que reasigna a quien no responda.",
+    "INC-0102 no tiene evento ASIGNACION en la bitácora, a diferencia de INC-0101 (EV-1003). La convocatoria sí salió a 5 destinatarios (B-203), así que no afecta la atención; la causa no se puede determinar con esta ventana."
+  ],
+  "revision": {"revisor": null, "veredicto": "NO_REQUERIDA", "archivo": null}
+}

@@ -1,0 +1,33 @@
+{
+  "parte_id": "P-V-20261105-1900",
+  "ventana_id": "V-20261105-1900",
+  "ventana_archivo": "casos/caso-04-n8n-caido/ventana.json",
+  "generado_en": "2026-10-31T16:23:49Z",
+  "estado_global": "ROJO",
+  "prioridad_maxima": "P1",
+  "detectores_disparados": ["D1", "D3"],
+  "hallazgos": [
+    {
+      "causa_catalogo": "F-01",
+      "prioridad": "P1",
+      "resumen": "n8n rechazó la conexión en los dos despachos de la ventana (B-501, B-502) y no hay ninguna ejecución de n8n: ningún aviso salió por ningún canal. La falla es silenciosa: /api/salud marca n8n en true porque solo indica que la URL está configurada, y la bitácora dice 'Evento despacho publicado' (EV-1303, EV-1306). INC-0130 e INC-0131 siguen notificados sin verificación de plazo (F-05, síntoma de esta causa) y el vigilante interno está apagado.",
+      "evidencia": ["B-501", "B-502", "INC-0130", "INC-0131", "EV-1303", "EV-1306", "config.vigilante_sla", "config.n8n_configurado", "salud"],
+      "impacto": "Ninguna brigada se enteró de las dos emergencias activas y nadie reasigna. INC-0130 (nivel 2, plazo vencido hace 13 min al cierre de la ventana): 4 cupos según RN-07b, 5 convocados, 0 confirmaron, 0 rechazaron, 5 sin responder. INC-0131 (nivel 1, plazo vencido hace 3,5 min): 2 cupos según RN-07b (nivel 1 sin sobre-convocatoria), 2 convocados, 0 confirmaron, 0 rechazaron, 2 sin responder. Cualquier emergencia nueva quedará igual hasta que n8n vuelva.",
+      "accion_recomendada": "Coordinador: llamar ya por teléfono a las brigadas de INC-0130 e INC-0131 y despachar por esa vía. Admin TI: comprobar por qué nada escucha en la dirección del webhook (el error es conexión rechazada: n8n detenido o URL errada; la ventana no permite distinguirlos), reiniciar n8n y activar VIGILANTE_SLA=1 mientras tanto. Después, revisar con el coordinador el estado de ambos incidentes, porque los eventos ya emitidos no consta que se hayan entregado.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    }
+  ],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado hasta contratar el plan pago de Twilio (config.sms_habilitado en false); no es una falla ni la causa de esta caída."}
+  ],
+  "alerta_coordinador": {
+    "enviar": true,
+    "canal_sugerido": "Llamada telefónica (n8n envía todas las alertas y está caído)",
+    "texto": "[ARKOF·Vigía] P1 Las brigadas no están recibiendo ningún aviso: la mensajería está caída. Afecta: INC-0130 (plazo vencido hace 13 min, 5 convocados sin responder, 4 cupos), INC-0131 (vencido hace más de 3 min, 2 sin responder, 2 cupos) y próximos despachos. Haga ya: llame a ambas brigadas y despache por teléfono. Nadie reasigna solo. Admin TI: revisar y reiniciar n8n; activar vigilante interno."
+  },
+  "para_resumen_semanal": [
+    "/api/salud reporta n8n en true aunque n8n esté caído, porque solo mira si la URL está configurada; no sirve como señal de vida."
+  ],
+  "revision": {"revisor": "revisor-vigia", "veredicto": "APROBADO", "archivo": "memoria/revisiones/P-V-20261105-1900.md"}
+}
