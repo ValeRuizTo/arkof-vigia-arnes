@@ -11,6 +11,11 @@ import re
 import sys
 from pathlib import Path
 
+try:  # Windows: que ✔ y las tildes se impriman bien aunque la salida vaya a un archivo
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import verificar_parte as V  # noqa: E402
 

@@ -19,6 +19,11 @@ import re
 import sys
 from datetime import datetime
 from pathlib import Path
+
+try:  # Windows: que ✔ y las tildes se impriman bien aunque la salida vaya a un archivo
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
 from urllib.parse import urlparse
 
 PRIORIDADES = ["P1", "P2", "P3", "P4"]

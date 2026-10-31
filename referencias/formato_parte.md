@@ -2,18 +2,18 @@
 
 ```json
 {
-  "parte_id": "P-V-20261103-1000",
-  "ventana_id": "V-20261103-1000",
+  "parte_id": "P-V-AAAAMMDD-HHMM",
+  "ventana_id": "V-AAAAMMDD-HHMM",
   "ventana_archivo": "casos/.../ventana.json",
-  "generado_en": "2026-11-03T10:30:40Z",
+  "generado_en": "<fecha y hora ISO>",
   "estado_global": "VERDE | AMARILLO | ROJO",
   "prioridad_maxima": "P1 | P2 | P3 | P4 | null",
-  "detectores_disparados": ["D2", "D3"],
+  "detectores_disparados": ["D2"],
   "hallazgos": [{
-    "causa_catalogo": "F-02 | NUEVA",
+    "causa_catalogo": "F-0X | NUEVA",
     "prioridad": "P1",
     "resumen": "Qué pasa, en una o dos frases, con ids.",
-    "evidencia": ["E-7101", "INC-0110"],
+    "evidencia": ["E-0000", "INC-0000"],
     "impacto": "Qué le pasa a una emergencia real por esto.",
     "accion_recomendada": "Qué debe hacer una persona.",
     "requiere_aprobacion_humana": true,

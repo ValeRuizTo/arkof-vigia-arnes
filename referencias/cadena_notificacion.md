@@ -53,7 +53,12 @@ historial de ejecuciones de n8n; en producción la armaría un paso fijo del flu
 
 ## Glosario
 - **Brigada confirmada:** todos los cupos requeridos (total y líderes) confirmaron.
-- **Déficit:** cupos sin cubrir contando confirmados y pendientes (RN-08).
+- **Déficit:** cupos requeridos − (confirmados + pendientes dentro del plazo) (RN-08). Con
+  sobre-convocatoria (RN-07b: +1 técnico en nivel 2, +2 en nivel 3) un **rechazo puede no generar
+  déficit**: si había 5 convocados para 4 cupos, un rechazo deja 4 posibles. El riesgo real son los
+  convocados **sin respuesta** cuando vence el plazo. Al describir el impacto, cuenta siempre:
+  cupos requeridos, confirmados, rechazados y sin respuesta (p. ej. "4 cupos: 1 confirmó, 1 rechazó,
+  3 sin responder").
 - **Plazo / SLA de confirmación:** tiempo máximo para que el brigadista responda (RN-07).
 - **Escalamiento humano:** tras 2 rondas automáticas decide el coordinador.
 - **Falla silenciosa:** un canal o paso falla sin detener el flujo ni avisar a nadie.

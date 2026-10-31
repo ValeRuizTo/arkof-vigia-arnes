@@ -17,6 +17,8 @@ La prioridad se decide por el **impacto sobre una emergencia real**, no por el n
 - Lo que está así por diseño (SMS desactivado, Telegram como demostración) va en
   `comportamientos_esperados`, nunca como hallazgo.
 - Un incidente en curso dentro de su plazo no es falla.
+- Para medir el impacto sobre una brigada, calcula el déficit como explica el glosario de
+  `cadena_notificacion.md`: un rechazo absorbido por la sobre-convocatoria no es un cupo perdido.
 - Una falla de un canal de producción cuando es el **único** activo cuenta como "ningún canal entregó".
 - Si la causa no está en el catálogo, usa `NUEVA` y descríbela con la evidencia; no la fuerces a una conocida.
 - Ante la duda entre dos prioridades, la más alta: es peor callar una caída que alertar de más.
