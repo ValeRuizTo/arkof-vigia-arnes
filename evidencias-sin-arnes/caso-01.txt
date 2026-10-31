@@ -1,0 +1,101 @@
+PARTE DE SALUD – CADENA DE NOTIFICACIONES A BRIGADISTAS
+Plataforma de despacho ARKOF – Entorno: PILOTO
+Ventana: V-20261103-0800 | 2026-11-03 08:00–08:15 UTC (03:00–03:15 hora Colombia)
+
+==================================================================
+1. ESTADO GENERAL: AMARILLO (operativo, con riesgo)
+==================================================================
+La cadena funciona de punta a punta: el reporte se publica en n8n sin
+demora, los mensajes salen en 2–4 segundos, los brigadistas responden por
+los enlaces y el sistema cierra el incidente. INC-0101 lo demuestra.
+
+El riesgo está en dos frentes:
+- INC-0102 (Nivel 2) llega al cierre de la ventana con solo 1 de 5
+  brigadistas confirmados y a 50 segundos de vencer su plazo.
+- La cadena no tiene respaldo: SMS apagado, Telegram en modo demostración,
+  vigilante de plazos desactivado y enlaces servidos desde un túnel ngrok
+  gratuito. Si falla una pieza, nadie se entera automáticamente.
+
+Salud técnica: API ok, n8n ok, sin errores de n8n en la bandeja.
+
+==================================================================
+2. RESUMEN POR INCIDENTE
+==================================================================
+INC-0101 | Derrame de hidrocarburo | Nivel 1 | Acacías | CONFIRMADO
+- Reportado y notificado: 08:02:10 (latencia 0 s)
+- Telegram 08:02:12, correo 08:02:14
+- Líder confirma 08:04:10, técnico confirma 08:05:10
+- Brigada completa a los 3:00 min (plazo 5 min) -> CUMPLE
+- Verificación de plazo a las 08:07:10 respondió "ninguna": correcto
+- Aviso al cliente "brigada en camino" enviado 08:05:13
+
+INC-0102 | Sustancia nociva | Nivel 2 | Puerto López | NOTIFICADO
+- Reportado y notificado: 08:10:50 (latencia 0 s)
+- Telegram 08:10:52, correo 08:10:54, 5 destinatarios
+- Solo el líder confirma (08:13:40). 4 de 5 sin respuesta.
+- Plazo vence 08:15:50 UTC (03:15:50 Colombia). Al cierre de la
+  ventana quedan 50 s -> EN RIESGO DE INCUMPLIR
+- Ejecución n8n E-7003 en espera del plazo; la verificación aún no corre
+
+==================================================================
+3. HALLAZGOS
+==================================================================
+[P1 – CRÍTICO] INC-0102 con brigada incompleta a punto de vencer
+  4 de 5 brigadistas sin confirmar a 50 s del plazo. Requiere acción
+  humana inmediata; no conviene esperar a que actúe la automatización.
+
+[P1 – CRÍTICO] El único control de plazos es la espera de n8n
+  vigilante_sla = false. El escalamiento depende solo del nodo "Esperar
+  plazo de confirmación" de n8n. Si n8n se reinicia, se cae o pierde la
+  ejecución en espera, el incumplimiento pasa sin alerta.
+  Acción: activar el vigilante de plazos en la API como segunda línea.
+
+[P1 – ALTO] Canal real a brigadistas reducido a correo
+  SMS deshabilitado (nodo "disabled") y Telegram marcado "demostración".
+  En la práctica el correo podría ser el único canal que llega al
+  brigadista real, y un correo de madrugada no basta para una emergencia.
+  Acción: confirmar a quién llega el Telegram de demostración y habilitar
+  SMS o Telegram productivo antes de seguir el piloto.
+
+[P2 – ALTO] Enlaces de confirmación servidos desde ngrok gratuito
+  public_base_url = https://arkof-piloto.ngrok-free.app. Si el túnel se
+  reinicia cambia la URL y los enlaces ya enviados dejan de funcionar
+  (hoy hay 4 pendientes en INC-0102). El plan gratuito además muestra una
+  página de advertencia que puede confundir al brigadista en el celular.
+  Acción: dominio fijo o túnel con subdominio reservado.
+
+[P3 – MEDIO] Falta el evento de ASIGNACIÓN de INC-0102 en la bitácora
+  INC-0101 registra "Brigada propuesta: 1 líder y 1 técnico"; INC-0102 pasa
+  de CLASIFICACION a NOTIFICACION sin registrar la brigada. No queda
+  trazado qué roles se convocaron ni cuáles faltan.
+  Acción: revisar por qué no se escribió el evento.
+
+[P4 – BAJO] Marcas de tiempo con fecha futura
+  La ventana está fechada el 2026-11-03 y hoy es 2026-10-31. Si son datos
+  reales y no una simulación, revisar el reloj del servidor: un desfase
+  afecta el cálculo de plazos.
+
+[OK] Puntos que funcionan bien
+- Publicación en n8n inmediata y sin errores
+- Entrega de mensajes en 2–4 s
+- Un enlace único por brigadista; las respuestas se registran
+- Verificación de plazo responde correctamente cuando hay confirmación
+- Aviso al cliente sale apenas se completa la brigada
+
+==================================================================
+4. ALERTA PARA EL COORDINADOR
+==================================================================
+ALERTA ARKOF – INC-0102 (Nivel 2, sustancia nociva, Puerto López)
+Brigada incompleta: 1 de 5 confirmados (solo el líder). El plazo vence a
+las 03:15:50 hora Colombia. Llame ya a los 4 brigadistas pendientes por
+teléfono: el SMS está apagado y no hay vigilante automático de respaldo.
+Si en 5 minutos no completa la brigada, active personal de reemplazo.
+
+==================================================================
+5. ACCIONES RECOMENDADAS (EN ORDEN)
+==================================================================
+1. Ahora: contacto telefónico a los pendientes de INC-0102.
+2. Hoy: activar vigilante_sla en la API.
+3. Antes del próximo turno: habilitar SMS o Telegram productivo.
+4. Antes del próximo turno: URL pública fija en lugar de ngrok gratuito.
+5. Revisar el registro de asignación faltante y el reloj del servidor.

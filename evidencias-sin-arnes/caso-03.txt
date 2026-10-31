@@ -1,0 +1,138 @@
+PARTE DE SALUD – CADENA DE NOTIFICACIONES A BRIGADISTAS (ARKOF)
+Ventana: V-20261104-1430 | 2026-11-04 14:30–14:45 UTC (09:30–09:45 hora Colombia) | Entorno: piloto
+Incidente observado: INC-0120 – Sustancia nociva, Nivel 3, Puerto Gaitán (SLA de confirmación: 4 min)
+
+======================================================================
+1. ESTADO GENERAL: ROJO (CRÍTICO)
+======================================================================
+La orquestación funciona: n8n recibe eventos, reparte por brigadista, espera el plazo,
+reasigna, escala y entrega la decisión al coordinador. La ENTREGA de las notificaciones
+NO funciona:
+- El correo falla en el 100% de los envíos (4 de 4 ejecuciones) por credenciales rechazadas.
+- El SMS está deshabilitado.
+- El único canal que sale es Telegram en modo demostración.
+
+Resultado operativo: de 16 convocatorias (8 + 5 + 3), solo 1 brigadista respondió (6%).
+El incidente N3 quedó con 1 de 6 puestos cubiertos (1 técnico, 0 líderes) a los 12 minutos
+y pasó a decisión humana.
+
+Además, los indicadores de salud muestran verde (salud.ok=true, n8n=true, error_n8n=null)
+mientras todas las ejecuciones de n8n terminaron en error. El monitoreo actual no detecta
+esta falla.
+
+======================================================================
+2. LÍNEA DE TIEMPO (UTC / hora Colombia)
+======================================================================
+14:31:00 / 09:31  Reporte de AgroPalma Meta (teléfono). Clasificado N3. Se asignan 8
+                  (2 líderes + 4 técnicos + 2 por sobre-convocatoria HAZMAT). Despacho a n8n.
+14:31:02          Telegram OK. 14:31:04 Correo FALLA (535 BadCredentials). SMS deshabilitado.
+14:33:20 / 09:33  Brigadista 11 (técnico) confirma desde Telegram.
+14:35:05 / 09:35  Vence SLA: 7 sin respuesta. Ronda 1: se convocan 5.
+14:39:10 / 09:39  Vence SLA: 5 sin respuesta. Ronda 2: se convocan 3 (ver hallazgo P2-5).
+14:43:15 / 09:43  Vence SLA: 3 sin respuesta. Máximo de rondas: decide el coordinador.
+14:43:17          Telegram al coordinador OK. 14:43:19 Correo al coordinador FALLA.
+14:45:00 / 09:45  Fin de ventana: incidente sigue en estado "notificado", 1/6 cubiertos.
+
+======================================================================
+3. HALLAZGOS POR PRIORIDAD
+======================================================================
+P1 = crítico, atender ya | P2 = alto, esta semana | P3 = medio | P4 = bajo
+
+[P1-1] Canal de correo caído en todos los envíos
+  Evidencia: nodos "Correo al brigadista" y "Correo al coordinador" en error en E-7201,
+  E-7202, E-7203 y E-7204: "535-5.7.8 Username and Password not accepted" (Gmail SMTP).
+  Causa probable: contraseña de aplicación de Gmail revocada o cambiada, o credencial
+  SMTP mal configurada en n8n.
+  Acción: regenerar la contraseña de aplicación (o migrar a OAuth2), actualizar la
+  credencial en n8n y hacer un envío de prueba a un brigadista real.
+
+[P1-2] Sin redundancia de canales: un solo canal en modo demostración
+  Evidencia: sms_habilitado=false (nodos SMS "disabled"); telegram_demo=true.
+  Con el correo caído, toda la convocatoria depende de Telegram demo. La tasa de respuesta
+  (1/16) sugiere que la mayoría de brigadistas no recibe por ese canal.
+  Acción: habilitar SMS como canal mínimo para N3. Verificar qué brigadistas están
+  realmente enlazados al bot de Telegram.
+
+[P1-3] Incidente N3 sin cobertura
+  Evidencia: 1 de 6 puestos requeridos cubiertos, 0 líderes, tras 3 rondas (12 min).
+  Bitácora EV-1211: "decide el coordinador".
+  Acción: confirmar que el coordinador recibió la alerta y gestiona la convocatoria por
+  teléfono (ver sección 5).
+
+[P2-4] Falsos verdes en la observabilidad
+  Evidencia: salud.ok=true, salud.n8n=true y error_n8n=null en B-401 a B-404, mientras las
+  4 ejecuciones de n8n terminaron con estado "error". La API solo registra que n8n aceptó
+  el webhook, no si el mensaje se entregó.
+  Acción: crear un flujo de errores en n8n (Error Trigger) que devuelva el fallo a la API y
+  lo escriba en la bandeja. Hacer que el chequeo de salud considere el resultado de las
+  últimas ejecuciones y el estado de cada canal.
+
+[P2-5] Déficit inconsistente en la ronda 2
+  Evidencia: EV-1208 registra 5 vencidas sin respuesta y no hay confirmaciones nuevas entre
+  14:35 y 14:39. Aun así, EV-1209 convoca solo 3. Quedaron 2 puestos sin convocar.
+  Acción: revisar el cálculo del déficit. Si la causa es que se agotó el pool de
+  brigadistas disponibles, registrarlo explícitamente en la bitácora y alertar al
+  coordinador en ese momento, sin esperar al final de las rondas.
+
+[P2-6] Alerta al coordinador frágil y tardía
+  Evidencia: B-404 tiene destinatarios=0. Solo salió por Telegram demo (correo falló, SMS
+  deshabilitado). Se emitió a los 12 min del reporte, en un N3 con sustancia peligrosa
+  cerca de una comunidad.
+  Acción: verificar que el coordinador la recibió. Para N3, avisar al coordinador desde
+  la primera ronda fallida y por al menos 2 canales.
+
+[P2-7] Control de SLA sin respaldo
+  Evidencia: vigilante_sla=false. Los plazos dependen solo del nodo "Esperar plazo de
+  confirmación" de n8n. Si n8n se reinicia o la ejecución se pierde, nadie reasigna ni
+  escala.
+  Acción: activar el vigilante de SLA del lado de la API como respaldo.
+
+[P3-8] Estado del incidente desactualizado
+  Evidencia: INC-0120 sigue en "notificado" tras el escalamiento humano (EV-1211).
+  Acción: pasar a un estado como "escalado / requiere decisión" para que sea visible en
+  el tablero.
+
+[P3-9] Enlaces de confirmación sobre túnel ngrok gratuito
+  Evidencia: public_base_url=https://arkof-piloto.ngrok-free.app.
+  Riesgos: la URL cambia al reiniciar el túnel (los enlaces ya enviados se rompen) y la
+  página de advertencia de ngrok-free puede frenar la confirmación desde el celular.
+  Aceptable en piloto. No apto para producción: usar un dominio propio estable.
+
+[P4-10] Tokens de confirmación visibles en la bandeja
+  Evidencia: los enlaces completos con token quedan en texto plano en el registro.
+  Quien tenga acceso a los registros podría confirmar a nombre de un brigadista.
+  Acción: enmascarar los tokens en los registros.
+
+======================================================================
+4. QUÉ SÍ FUNCIONA
+======================================================================
+- n8n recibe los 4 eventos y enruta correctamente por tipo de evento.
+- División en un ítem por brigadista y envío por Telegram: OK en todas las ejecuciones.
+- El fallo del correo no rompe el flujo: la espera, la verificación y el escalamiento
+  continúan.
+- El ciclo de SLA es consistente (~4 min por ronda) y la lógica de rondas termina en
+  escalamiento humano, como está diseñado.
+- La confirmación vía Telegram llega a la bitácora (EV-1205).
+
+======================================================================
+5. ALERTA PARA EL COORDINADOR
+======================================================================
+ALERTA ARKOF – INC-0120 SIN COBERTURA (NIVEL 3)
+Sustancia nociva cerca de vereda – Puerto Gaitán – Cliente: AgroPalma Meta
+
+Tras 3 rondas de convocatoria (09:31 a 09:43), solo 1 de 6 brigadistas confirmó:
+1 técnico (brigadista 11). 0 líderes confirmados.
+El sistema agotó las rondas automáticas: la decisión queda en sus manos.
+
+Causa probable: falla técnica en las notificaciones. El correo está caído (credenciales
+rechazadas) y el SMS está deshabilitado. La mayoría de los brigadistas probablemente
+NO recibió la convocatoria.
+
+Acciones sugeridas inmediatas:
+1. Convocar por teléfono a líderes y técnicos HAZMAT disponibles.
+2. Coordinar con el brigadista 11 (ya confirmado) su llegada y el reporte inicial de sitio.
+3. Según el protocolo, evaluar apoyo externo (bomberos / gestión del riesgo municipal) por
+   la cercanía a la comunidad.
+4. Informar al cliente el estado de la atención.
+
+Hasta que se restablezca el correo, las nuevas convocatorias deben hacerse por teléfono.

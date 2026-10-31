@@ -1,0 +1,154 @@
+=====================================================================
+PARTE DE SALUD - PLATAFORMA DE DESPACHO DE BRIGADAS ARKOF
+Ventana: V-20261105-1900 | Entorno: piloto
+Periodo: 2026-11-05 19:00-19:30 UTC (14:00-14:30 hora Colombia)
+=====================================================================
+
+ESTADO GENERAL: CRITICO (ROJO)
+
+La cadena de notificaciones a brigadistas NO funciona. Ningun mensaje
+de despacho llego a los brigadistas durante la ventana. La plataforma
+reporta lo contrario: el chequeo de salud dice "ok" y los incidentes
+figuran como "notificado". Hay 2 incidentes activos (derrame de
+hidrocarburo y fuga de gas) sin brigada confirmada y con el SLA
+vencido.
+
+---------------------------------------------------------------------
+RESUMEN DE LA CADENA
+---------------------------------------------------------------------
+Reporte -> Clasificacion -> Publicacion -> n8n -> Canal -> Brigadista -> Confirmacion
+   OK          OK              OK*         FALLA   NO       NO RECIBE     NINGUNA
+
+* El sistema registra la publicacion como exitosa aunque la entrega
+  fallo.
+
+Incidentes afectados:
+- INC-0130 | DERRAME_HIDROCARBURO | Nivel 2 | Acacias
+  Notificado (segun sistema): 19:12:00 UTC | SLA: 5 min
+  Destinatarios: 5 | Entregados: 0 | Confirmaciones: 0
+  Al cierre de la ventana: 18 min sin confirmacion (SLA excedido
+  por 13 min)
+
+- INC-0131 | FUGA_GAS | Nivel 1 | Granada
+  Notificado (segun sistema): 19:21:30 UTC | SLA: 5 min
+  Destinatarios: 2 | Entregados: 0 | Confirmaciones: 0
+  Al cierre de la ventana: 8,5 min sin confirmacion (SLA excedido
+  por 3,5 min)
+
+Total: 7 brigadistas sin notificar. 0 ejecuciones registradas en n8n.
+
+---------------------------------------------------------------------
+HALLAZGOS POR PRIORIDAD
+---------------------------------------------------------------------
+
+[P1 - CRITICO] H1. n8n no recibe los eventos de despacho
+  Evidencia: B-501 y B-502 tienen el error "Connection refused" contra
+  localhost:5678/webhook/arkof-despacho. La lista ejecuciones_n8n esta
+  vacia. El mismo error se repite con 9,5 min de diferencia, asi que
+  la falla es persistente y no un corte puntual.
+  Causas probables:
+  (a) el proceso o contenedor de n8n esta caido; o
+  (b) la URL apunta a "localhost" y el backend corre en otro
+      contenedor o host, donde localhost no es n8n.
+  Impacto: ningun brigadista recibio el despacho ni el enlace de
+  confirmacion.
+
+[P1 - CRITICO] H2. SLA vencido en ambos incidentes sin escalamiento
+  Evidencia: vigilante_sla = false. En la bitacora no hay eventos de
+  escalamiento, de confirmacion ni de reintento.
+  Impacto: nadie fue alertado de que los brigadistas no respondieron.
+  La falla paso en silencio.
+
+[P1 - CRITICO] H3. Falso positivo en el chequeo de salud
+  Evidencia: salud.ok = true y salud.n8n = true, mientras n8n rechaza
+  conexiones en el mismo periodo.
+  Impacto: el monitoreo no detecta la caida. Probablemente valida la
+  configuracion (n8n_configurado) y no la conectividad real con el
+  webhook.
+
+[P1 - CRITICO] H4. Estado y bitacora reportan exito ante un fallo
+  Evidencia: los incidentes figuran como "notificado" y la bitacora
+  registra "Evento despacho publicado" (EV-1303, EV-1306), aunque la
+  bandeja muestra el canal "simulacion (n8n no respondio)".
+  Impacto: el coordinador ve en pantalla que todo esta notificado. El
+  fallback a simulacion se activa sin alertar a nadie.
+
+[P2 - ALTO] H5. No hay canal de respaldo
+  Evidencia: sms_habilitado = false y telegram_demo = true. Si n8n
+  falla, no existe otra via real de entrega.
+  Impacto: hay un punto unico de falla en la notificacion de
+  emergencias.
+
+[P2 - ALTO] H6. Los enlaces de confirmacion dependen de un tunel
+  ngrok gratuito
+  Evidencia: public_base_url = https://arkof-piloto.ngrok-free.app
+  Impacto: la URL cambia cada vez que se reinicia el tunel y los
+  enlaces ya emitidos dejan de funcionar. Ademas, ngrok-free muestra
+  una pagina de advertencia antes de abrir el enlace, lo que puede
+  impedir que el brigadista confirme desde el movil. Aunque se
+  restablezca n8n, los 7 enlaces actuales solo sirven si el tunel
+  sigue siendo el mismo.
+
+[P3 - MEDIO] H7. Inconsistencias de configuracion y datos (verificar)
+  - sla_demo_min = null: confirmar que el SLA de 5 min proviene de la
+    regla correcta.
+  - La ventana se describe como "Turno de la noche", pero 19:00 UTC
+    son las 14:00 en Colombia. Revisar la zona horaria del sistema.
+  - La ventana esta fechada el 2026-11-05, que es posterior a la fecha
+    de este analisis (2026-10-31). Confirmar si son datos de prueba o
+    si hay un desfase de reloj en el servidor.
+  - El significado del nivel 1 frente al nivel 2 no esta definido en
+    los datos. Confirmar cual es el mas grave para priorizar entre
+    INC-0130 e INC-0131.
+
+---------------------------------------------------------------------
+ACCIONES RECOMENDADAS
+---------------------------------------------------------------------
+INMEDIATAS (ahora)
+  1. Despacho manual por telefono o radio a los 7 brigadistas de
+     INC-0130 e INC-0131.
+  2. Verificar n8n: estado del proceso o contenedor, puerto 5678 y si
+     el webhook /webhook/arkof-despacho esta activo.
+  3. Si el backend corre en Docker, cambiar "localhost" por el nombre
+     del servicio n8n o por su IP.
+  4. Una vez restablecido, reemitir B-501 y B-502 y confirmar que
+     aparecen en ejecuciones_n8n.
+
+CORTO PLAZO
+  5. Hacer que el chequeo de salud llame al webhook real (ping o POST
+     de prueba) en lugar de leer la configuracion.
+  6. Usar un estado "fallo_notificacion" en vez de "notificado" cuando
+     n8n no responda. En el piloto, el fallback a simulacion debe
+     generar una alerta visible.
+  7. Activar vigilante_sla para que escale automaticamente al vencer
+     el SLA sin confirmacion.
+
+ESTRUCTURAL
+  8. Habilitar un canal de respaldo (SMS o llamada) independiente de
+     n8n.
+  9. Usar un dominio estable para los enlaces de confirmacion en lugar
+     de ngrok-free.
+ 10. Añadir reintentos con backoff y cola persistente para los
+     despachos.
+
+---------------------------------------------------------------------
+ALERTA PARA EL COORDINADOR
+---------------------------------------------------------------------
+ALERTA CRITICA - ARKOF DESPACHO
+
+Los despachos de INC-0130 (derrame de hidrocarburo, Acacias) e
+INC-0131 (fuga de gas, Granada) NO llegaron a los brigadistas. El
+sistema de notificaciones (n8n) esta caido desde las 14:12 hora
+Colombia.
+
+Aunque la plataforma los muestre como "notificado", ningun brigadista
+recibio el aviso y nadie ha confirmado. El SLA de 5 minutos esta
+vencido en ambos casos.
+
+ACCION REQUERIDA YA: contacte por telefono o radio a los 5 brigadistas
+de INC-0130 y a los 2 de INC-0131 y confirme manualmente su
+movilizacion. No confie en el estado de la plataforma hasta nuevo
+aviso.
+
+Soporte tecnico ya fue notificado para restablecer el servicio.
+=====================================================================

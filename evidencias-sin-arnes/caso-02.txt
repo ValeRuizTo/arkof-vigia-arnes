@@ -1,0 +1,150 @@
+PARTE DE SALUD · CADENA DE NOTIFICACIONES A BRIGADISTAS · ARKOF
+================================================================
+Ventana:   V-20261103-1000 · entorno piloto
+Periodo:   2026-11-03 10:00-10:30 UTC (05:00-05:30 hora Colombia)
+Contexto:  primera ventana después de reinstalar n8n en el servidor del piloto
+
+ESTADO GENERAL: CRÍTICO (ROJO)
+----------------------------------------------------------------
+El envío de avisos a los brigadistas funciona, pero el control de
+plazo y el escalamiento automático están caídos en todos los
+despachos. Por esta falla, un incidente nivel 2 activo (INC-0110)
+quedó sin brigada completa, con el plazo vencido y sin que nadie
+fuera alertado. El chequeo de salud reporta "ok", lo cual es un
+falso positivo.
+
+RESUMEN EN CIFRAS
+----------------------------------------------------------------
+Eventos publicados de ARKOF a n8n ........ 3/3   OK
+Envíos a brigadistas (Telegram/correo) ... 2/2   OK
+Ejecuciones n8n exitosas ................. 1/3   FALLA
+Verificaciones de plazo .................. 0/2   FALLA (401)
+Incidentes con brigada dentro del plazo .. 1/2   FALLA
+Chequeo de salud ......................... ok    (no detecta la falla)
+
+LO QUE FUNCIONA
+----------------------------------------------------------------
+- ARKOF publica los eventos en n8n sin error (B-301, B-302, B-303).
+- n8n reparte un ítem por brigadista y envía Telegram y correo en
+  unos 4 segundos.
+- Los enlaces de confirmación funcionan: hubo respuestas reales en
+  INC-0110 (1 confirma, 1 rechaza) e INC-0111 (brigada completa).
+- INC-0111 (nivel 1, Villavicencio): brigada confirmada en 3 min,
+  dentro del plazo de 5 min. El aviso al cliente ("brigada en
+  camino") salió correctamente (E-7103).
+
+HALLAZGOS
+----------------------------------------------------------------
+[P1 · CRÍTICA] H1. INC-0110 sin brigada completa, plazo vencido y
+sin escalamiento
+  - Derrame de hidrocarburo nivel 2, Castilla La Nueva, cliente
+    Petro Llanos. Reportado a las 10:12 UTC; el plazo vencía a las
+    10:17 UTC.
+  - Se requieren 1 líder y 3 técnicos. Se convocaron 5 personas
+    (1 líder, 3 técnicos y 1 de sobre-convocatoria).
+  - Confirmó solo el líder (brigadista 2, 10:14). El técnico 9
+    rechazó (10:15). Los otros 3 técnicos no respondieron, así que
+    hay 0 de 3 técnicos confirmados.
+  - Al cierre de la ventana (10:30) el incidente sigue en estado
+    "notificado": 18 min desde el reporte, 13 min fuera de plazo,
+    sin reconvocatoria ni alerta al coordinador.
+
+[P1 · CRÍTICA] H2. La verificación de plazo falla con 401 en todos
+los despachos
+  - El nodo "Verificar plazo en la API" devolvió 401 Unauthorized
+    en E-7101 (INC-0110, 10:17:05) y en E-7102 (INC-0111, 10:25:05).
+    Falla 2 de 2 veces, así que es sistemática y no intermitente.
+  - El tramo ARKOF -> n8n funciona; el tramo de regreso n8n -> API
+    de ARKOF no autentica. Como esta verificación es el paso que
+    dispara el escalamiento, el escalamiento automático está caído
+    para todo despacho nuevo.
+  - Causa probable: la reinstalación de n8n. O la credencial de la
+    API no se restauró en el nodo, o cambió N8N_ENCRYPTION_KEY y las
+    credenciales importadas ya no se pueden descifrar, o el token no
+    coincide con el que espera la API.
+  - En INC-0111 el error no tuvo impacto porque la brigada ya estaba
+    confirmada. En INC-0110 sí lo tuvo (ver H1).
+
+[P2 · ALTA] H3. No hay respaldo para el control de plazo
+  - vigilante_sla = false. El vigilante del backend está apagado,
+    así que n8n es el único mecanismo de escalamiento. Al caer n8n
+    (H2), nada más detectó el vencimiento de INC-0110.
+
+[P2 · ALTA] H4. La falla es invisible para la plataforma
+  - /salud responde ok y n8n=true: solo comprueba que n8n responde,
+    no que n8n pueda autenticarse contra la API.
+  - La bandeja registra error_n8n = null en los tres eventos: los
+    errores de las ejecuciones de n8n no se propagan a ARKOF.
+  - No hay evidencia de que exista un flujo de errores en n8n que
+    alerte cuando una ejecución termina en error.
+
+[P3 · MEDIA] H5. El único canal real hacia los brigadistas es el correo
+  - El SMS está deshabilitado (nodo "disabled") y Telegram está en
+    modo demostración (telegram_demo = true).
+  - Para emergencias nivel 2, el correo como único canal efectivo es
+    insuficiente y puede explicar los 3 técnicos sin respuesta.
+
+[P3 · MEDIA] H6. La bitácora de INC-0111 está incompleta
+  - No hay eventos de CLASIFICACION ni ASIGNACION, ni respuestas
+    individuales de brigadistas. Solo aparecen el reporte, la
+    notificación y "Brigada completa". Esto deja un hueco de
+    trazabilidad para auditoría.
+
+[P4 · BAJA] H7. Los enlaces dependen de un túnel ngrok gratuito
+  - public_base_url = https://arkof-piloto.ngrok-free.app
+  - Si el túnel se cae, todos los enlaces de confirmación dejan de
+    funcionar. Además, la página de advertencia de ngrok-free puede
+    confundir a los brigadistas. Es aceptable en el piloto, pero no
+    para producción.
+
+ACCIONES RECOMENDADAS
+----------------------------------------------------------------
+Inmediato (ahora):
+  1. Atender INC-0110 manualmente: enviar la alerta al coordinador
+     (ver abajo) para que contacte por teléfono a los técnicos
+     pendientes o convoque reemplazos.
+  2. Mientras H2 no se corrija, el coordinador debe vigilar a mano
+     el plazo de cada despacho nuevo.
+
+Hoy:
+  3. Corregir la credencial de "Verificar plazo en la API" en n8n:
+     recrear el token o el header de autenticación, asignarlo al
+     nodo y verificar N8N_ENCRYPTION_KEY. Probar con una llamada
+     manual autenticada y luego con un despacho de prueba completo
+     hasta el paso de verificación.
+  4. Activar vigilante_sla como respaldo independiente de n8n.
+
+Esta semana:
+  5. Agregar a /salud una prueba autenticada n8n -> API, no solo de
+     disponibilidad.
+  6. Configurar un flujo de errores en n8n que alerte al coordinador
+     y escriba error_n8n en la bandeja.
+  7. Habilitar SMS o sacar Telegram del modo demostración para
+     tener al menos dos canales reales hacia los brigadistas.
+  8. Revisar por qué INC-0111 no registró clasificación, asignación
+     ni respuestas en la bitácora.
+  9. Antes de producción, reemplazar ngrok-free por un dominio
+     propio y estable.
+
+ALERTA PARA EL COORDINADOR
+----------------------------------------------------------------
+URGENTE · INC-0110 · Derrame nivel 2 · Castilla La Nueva
+
+La brigada de INC-0110 (cliente Petro Llanos, reportado a las
+05:12 hora Colombia) NO está completa y el plazo de confirmación
+venció a las 05:17.
+
+- Confirmado: líder (brigadista 2).
+- Rechazó: técnico (brigadista 9).
+- Sin respuesta: 3 técnicos. Se necesitan 3 técnicos confirmados.
+
+El escalamiento automático NO funcionó por una falla técnica en
+n8n tras la reinstalación. Por favor:
+  1. Llame ya a los técnicos pendientes o convoque reemplazos.
+  2. Confirme con el líder el estado de la movilización.
+  3. Hasta nuevo aviso, verifique a mano el plazo de 5 min de cada
+     despacho nuevo: el sistema no está escalando solo.
+
+Soporte técnico ya está corrigiendo la falla. Avisaremos cuando
+el escalamiento automático esté restablecido.
+================================================================

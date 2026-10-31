@@ -1,0 +1,128 @@
+================================================================
+PARTE DE SALUD - CADENA DE NOTIFICACIONES A BRIGADISTAS (ARKOF)
+================================================================
+Ventana:   V-20261106-1530 | Entorno: piloto
+Periodo:   2026-11-06 15:30-16:00 UTC (10:30-11:00 hora Colombia)
+Alcance:   2 incidentes (INC-0140, INC-0141), 4 eventos de bandeja,
+           2 ejecuciones n8n, 7 registros de bitacora
+
+----------------------------------------------------------------
+1. ESTADO GENERAL: DEGRADADO (riesgo alto)
+----------------------------------------------------------------
+Los avisos salen y llegan por correo, y ambos incidentes se
+confirmaron dentro del SLA de 5 min. Pero el enlace de confirmacion
+que reciben los brigadistas no funciona: las dos brigadas se
+confirmaron porque los brigadistas entraron al portal por su cuenta.
+La cadena cumplio por el esfuerzo de las personas, no por el sistema.
+Ademas, ningun indicador (salud, ejecuciones n8n, bandeja) mostro
+el problema: todo aparece en verde.
+
+Resumen de tiempos:
+  INC-0140 (N1, Cumaral)   confirmado en 3m50s  -> margen 1m10s
+  INC-0141 (N2, Restrepo)  confirmado en 4m10s  -> margen 0m50s
+
+----------------------------------------------------------------
+2. HALLAZGOS
+----------------------------------------------------------------
+
+[P1 - CRITICO] Enlaces de confirmacion rotos tras el cambio de
+servidor
+  - Los 7 enlaces enviados apuntan a
+    https://arkof-piloto.ngrok-free.app/confirmar/...
+    Ese tunel ngrok corresponde al equipo anterior; la app se movio
+    de equipo en esta ventana.
+  - La configuracion actual tiene public_base_url =
+    http://localhost:5000. Los enlaces que se generen con ese valor
+    tampoco abriran desde el telefono de un brigadista.
+  - Evidencia: EV-1403, brigadista:4 "no pudo abrir el enlace del
+    correo" y confirmo desde el portal. EV-1407: INC-0141 se
+    confirmo completo por el portal (ningun enlace usado).
+  - Accion: publicar la app con una URL publica estable (no un
+    tunel atado a un equipo), actualizar public_base_url, y probar
+    un enlace real desde un movil antes del proximo turno.
+
+[P2 - ALTO] Fallas invisibles para el monitoreo
+  - salud.ok = true y n8n = true, pero el chequeo no verifica que la
+    URL publica de confirmacion responda.
+  - Las ejecuciones E-7401 y E-7402 figuran como "success" aunque
+    E-7401 tuvo un nodo en error (Telegram). El flujo continua ante
+    errores y el estado global los oculta.
+  - En la bandeja, error_n8n = null en todos los eventos: la app no
+    se entera de fallas aguas abajo.
+  - Accion: agregar al chequeo de salud una prueba a
+    {public_base_url}/confirmar; marcar la ejecucion como
+    "con errores" si falla cualquier nodo de envio; reportar a la
+    app los errores por nodo.
+
+[P2 - ALTO] Un solo canal real y sin respaldo de SLA
+  - SMS deshabilitado; Telegram es solo demostracion. El correo es
+    el unico canal productivo, y su enlace esta roto (P1).
+  - vigilante_sla = false y sla_demo_min = null: el control del plazo
+    depende solo del nodo "Esperar plazo" de n8n. Si n8n cae a mitad
+    de un despacho, nadie escala.
+  - Ambos SLA se cumplieron con margenes de 70 s y 50 s.
+  - Accion: activar el vigilante de SLA en la app como respaldo y
+    habilitar un segundo canal real (SMS) para nivel 2 o superior.
+
+[P3 - MEDIO] Bitacora incompleta para auditoria
+  - INC-0141 (5 brigadistas notificados) no tiene ningun registro
+    RESPUESTA_BRIGADISTA; solo "Brigada completa". No se puede saber
+    quien confirmo ni cuando.
+  - INC-0140: 2 notificados, 1 respuesta registrada, marcado
+    "Brigada completa". Verificar si la brigada requeria 1 persona o
+    si falta un registro.
+  - El aviso "confirmado" de INC-0141 se envio a 2 destinatarios de
+    los 5 despachados. Verificar si los otros 3 deben ser liberados
+    o informados.
+  - Accion: registrar cada confirmacion individual tambien cuando
+    entra por el portal.
+
+[P3 - MEDIO] Telegram (demo) falla por formato del mensaje
+  - E-7401, nodo Telegram: "400 Bad Request: can't parse entities"
+    en el byte 212. Causa probable: caracteres especiales sin escapar
+    en modo Markdown/HTML (los tokens de enlace llevan "_", ej.
+    ca5_2b9ae7d5). En INC-0141 si funciono, asi que depende del
+    contenido.
+  - Accion: escapar el texto o enviar sin parse_mode. No afecta hoy
+    la operacion (es demo), pero el defecto pasaria a produccion.
+
+[P4 - BAJO] Latencia del correo
+  - El nodo de correo termino a los 92 s (INC-0140) y a los 75 s
+    (INC-0141) del despacho: consume del 25 al 30 % del SLA de 5 min
+    antes de que el brigadista reciba algo.
+  - Accion: revisar si los envios son secuenciales por brigadista y
+    paralelizarlos.
+
+[OBSERVACION] Fechas de la ventana
+  - La ventana esta fechada el 2026-11-06, posterior a la fecha de
+    este parte (2026-10-31). Confirmar si son datos simulados o si
+    hay un reloj desfasado en la plataforma; un desfase afectaria el
+    calculo de SLA y la trazabilidad.
+
+----------------------------------------------------------------
+3. ALERTA PARA EL COORDINADOR
+----------------------------------------------------------------
+Asunto: [ARKOF piloto] Enlaces de confirmacion caidos - confirmar
+        por el portal
+
+Coordinador:
+Desde el cambio de servidor de la app, los enlaces de confirmacion
+que llegan por correo a los brigadistas NO abren. Los avisos si
+estan llegando.
+
+Hoy INC-0140 (Cumaral) e INC-0141 (Restrepo) se confirmaron a
+tiempo solo porque los brigadistas entraron al portal por su cuenta
+(margenes de 70 y 50 segundos).
+
+Mientras se corrige:
+ 1. Al despachar, indique a los brigadistas que confirmen
+    directamente en el portal, sin usar el enlace del correo.
+ 2. Si a los 3 minutos no ve la brigada confirmada, llame por
+    telefono: hoy no hay SMS ni escalamiento automatico de respaldo.
+ 3. El panel de salud aparece en verde aunque haya esta falla; no lo
+    tome como garantia por ahora.
+
+Le avisaremos cuando los enlaces esten probados desde un movil.
+----------------------------------------------------------------
+Fin del parte
+================================================================
