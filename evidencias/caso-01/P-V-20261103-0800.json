@@ -1,0 +1,18 @@
+{
+  "parte_id": "P-V-20261103-0800",
+  "ventana_id": "V-20261103-0800",
+  "ventana_archivo": "casos/caso-01-turno-normal/ventana.json",
+  "generado_en": "2026-10-31T15:14:08Z",
+  "estado_global": "VERDE",
+  "prioridad_maxima": null,
+  "detectores_disparados": [],
+  "hallazgos": [],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado hasta contratar el plan pago de Twilio (config.sms_habilitado = false; nodos 'disabled' en E-7001 y E-7003). No es una falla."},
+    {"causa_catalogo": null, "nota": "Telegram opera como canal de demostración (config.telegram_demo = true). El correo, único canal de producción activo, entregó en 4 s en E-7001 y E-7003."},
+    {"causa_catalogo": null, "nota": "INC-0102 sigue 'notificado' pero dentro de su plazo: vence a las 08:15:50Z, después del cierre de la ventana. E-7003 está en 'waiting' en el nodo de espera y ya confirmó el líder (EV-1011). No es una falla; la próxima ventana debe mostrar la verificación del plazo en E-7003."}
+  ],
+  "alerta_coordinador": {"enviar": false, "canal_sugerido": null, "texto": ""},
+  "para_resumen_semanal": [],
+  "revision": {"revisor": null, "veredicto": "NO_REQUERIDA", "archivo": null}
+}

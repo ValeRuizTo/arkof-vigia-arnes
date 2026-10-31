@@ -1,0 +1,35 @@
+{
+  "parte_id": "P-V-20261105-1900",
+  "ventana_id": "V-20261105-1900",
+  "ventana_archivo": "casos/caso-04-n8n-caido/ventana.json",
+  "generado_en": "2026-10-31T15:43:47Z",
+  "estado_global": "ROJO",
+  "prioridad_maxima": "P1",
+  "detectores_disparados": ["D1", "D3"],
+  "hallazgos": [
+    {
+      "causa_catalogo": "F-01",
+      "prioridad": "P1",
+      "resumen": "n8n rechazó la conexión en los dos despachos de la ventana (B-501, B-502: Connection refused, canal 'simulación') y no hay ninguna ejecución de n8n en toda la ventana. Por eso ni INC-0130 ni INC-0131 tienen verificación de plazo: a las 19:30Z siguen notificados sin SLA_VENCIDO, ESCALAMIENTO ni BRIGADA_CONFIRMADA, con el plazo vencido hace 13 min y 3,5 min. La falla no se ve a simple vista: la bitácora dice 'Evento despacho publicado' (EV-1303, EV-1306) y salud.n8n es verdadero. Un rechazo de conexión en localhost:5678 indica que nada escuchaba en esa dirección: lo más probable es n8n detenido o un host o puerto errado en la URL del webhook, y menos probable un flujo desactivado con n8n vivo. La ventana no permite comprobarlo.",
+      "evidencia": ["B-501", "B-502", "INC-0130", "INC-0131", "EV-1303", "EV-1306", "config.vigilante_sla", "config.n8n_configurado", "salud"],
+      "impacto": "Ninguno de los 7 convocados (5 de INC-0130, derrame de hidrocarburo en Acacías, nivel 2; 2 de INC-0131, fuga de gas en Granada, nivel 1) tiene registrado un aviso por ningún canal, ni hay respuestas en la bitácora. Con el vigilante interno apagado, nadie reasigna ni escala, y el coordinador tampoco recibe alertas automáticas, porque también salen por n8n. Cualquier despacho nuevo quedará igual.",
+      "accion_recomendada": "Coordinador: llamar ya a los convocados de INC-0130 e INC-0131, cubrir los cupos a mano y gestionar por teléfono cualquier despacho nuevo. Administrador: comprobar si n8n está corriendo y reiniciarlo si no; si está vivo, revisar el host y el puerto de la URL del webhook y que el flujo esté activo. Mientras tanto, evaluar activar VIGILANTE_SLA=1. Después, comprobar con el siguiente despacho que hay ejecución en n8n, que el correo entrega y que la verificación del plazo responde sin 401: F-03 y F-02 siguen pendientes en la memoria y esta ventana, sin ejecuciones, no permite descartarlas. La ventana no muestra reintentos, así que no hay que asumir que los despachos ya emitidos se reenviarán solos. Todo requiere aprobación y ejecución humanas.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    }
+  ],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado (config.sms_habilitado = false) hasta contratar el plan pago de Twilio; no es una falla. En esta ventana no aporta evidencia del canal, porque no hubo ejecuciones."},
+    {"causa_catalogo": "Telegram demostración", "nota": "Telegram es de demostración (config.telegram_demo = true) y no cuenta como canal de producción. Depende de n8n, así que tampoco sirve hoy para avisar."},
+    {"causa_catalogo": "Salud de la app", "nota": "salud.n8n verdadero solo indica que la URL del webhook está configurada, no que n8n esté vivo; por eso no contradice el hallazgo."}
+  ],
+  "alerta_coordinador": {
+    "enviar": true,
+    "canal_sugerido": "Llamada telefónica",
+    "texto": "[ARKOF·Vigía] P1 Los avisos de emergencia no están saliendo y nadie reasigna a quien no responde: el sistema de mensajes está caído. Afecta: INC-0130 (derrame, Acacías, plazo vencido hace 13 min), INC-0131 (fuga de gas, Granada, vencido hace 3,5 min) y próximos despachos. Haga ya: llame a los convocados de ambos, cubra los cupos a mano y gestione por teléfono los despachos nuevos. Admin TI: reactivar n8n y evaluar activar el vigilante interno."
+  },
+  "para_resumen_semanal": [
+    "INC-0130 e INC-0131: la bitácora no registra eventos ASIGNACION, aunque la bandeja muestra 5 y 2 destinatarios (B-501, B-502). Sin efecto visible sobre la prioridad; revisar si la exportación quedó incompleta."
+  ],
+  "revision": {"revisor": "revisor-vigia", "veredicto": "APROBADO", "archivo": "memoria/revisiones/P-V-20261105-1900.md"}
+}

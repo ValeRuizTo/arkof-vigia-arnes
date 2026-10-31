@@ -1,0 +1,64 @@
+{
+  "parte_id": "P-V-20261106-1530",
+  "ventana_id": "V-20261106-1530",
+  "ventana_archivo": "casos/caso-05-degradacion/ventana.json",
+  "generado_en": "2026-10-31T15:48:52Z",
+  "estado_global": "AMARILLO",
+  "prioridad_maxima": "P2",
+  "detectores_disparados": ["D5", "D6", "D7"],
+  "hallazgos": [
+    {
+      "causa_catalogo": "F-08",
+      "prioridad": "P2",
+      "resumen": "config.public_base_url apunta a una dirección local en el piloto, tras el cambio de equipo del servidor, y hay brigadistas confirmando por el portal: en INC-0140 uno no pudo abrir el enlace del correo (EV-1403) y en INC-0141 las confirmaciones fueron por el portal (EV-1407). Los enlaces de B-601 y B-603 muestran el dominio del túnel público, no localhost, así que la configuración y los enlaces emitidos no coinciden: falta confirmar a qué equipo llega hoy ese túnel. Tampoco se puede medir a cuántos brigadistas afectó: la bitácora trae una sola RESPUESTA_BRIGADISTA en INC-0140 (2 convocados) y ninguna en INC-0141 (5 convocados), aunque ambos figuran con brigada completa.",
+      "evidencia": ["config.public_base_url", "EV-1403", "EV-1407", "B-601", "B-603", "INC-0140", "INC-0141"],
+      "impacto": "El aviso llega, pero el brigadista no puede confirmar con un toque desde el celular. Quien no conozca el portal o no tenga cómo entrar puede quedar sin responder, y la brigada se confirma más tarde o se dispara una reasignación innecesaria.",
+      "accion_recomendada": "El administrador debe confirmar a qué equipo apunta el túnel, actualizar PUBLIC_BASE_URL con la URL pública vigente y reiniciar la app. Después debe probar un enlace desde un celular fuera de la red local. Mientras tanto, el coordinador puede indicar a las brigadas que confirmen por el portal.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    },
+    {
+      "causa_catalogo": "F-06",
+      "prioridad": "P2",
+      "resumen": "El correo, único canal de producción activo, tardó más de la meta de 60 s entre el reporte y la primera entrega: 92 s en INC-0140 (E-7401) y 75 s en INC-0141 (E-7402). Los nodos previos terminaron en el mismo segundo del reporte, así que la demora está en el paso de correo.",
+      "evidencia": ["E-7401", "E-7402", "INC-0140", "INC-0141"],
+      "impacto": "La convocatoria sale tarde y consume parte del plazo de confirmación de 5 min. Como el SMS está desactivado, los brigadistas sin datos móviles no tienen otro canal que compense la demora.",
+      "accion_recomendada": "El administrador debe revisar los tiempos del SMTP (límite de envío de Gmail) y la cola de n8n, y evaluar un proveedor de correo transaccional si la demora persiste.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    },
+    {
+      "causa_catalogo": "F-04",
+      "prioridad": "P3",
+      "resumen": "Telegram (canal de demostración) rechazó por formato el mensaje al brigadista de INC-0140 (E-7401). En INC-0141 el mismo nodo funcionó (E-7402).",
+      "evidencia": ["E-7401"],
+      "impacto": "Ninguno sobre la atención: Telegram no es canal de producción y el correo de esa ejecución sí salió.",
+      "accion_recomendada": "El administrador debe revisar que los nodos de Telegram sigan con parse_mode HTML.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    },
+    {
+      "causa_catalogo": "NUEVA",
+      "prioridad": "P2",
+      "resumen": "Información faltante, no una falla comprobada: B-602 y B-604 (evento confirmado, canal n8n, sin error) no tienen ejecución en ejecuciones_n8n, así que esta ventana no permite verificar que salió el aviso al cliente de INC-0140 e INC-0141. La bandeja solo muestra que el evento se publicó. Puede ser una exportación incompleta, pero la ventana no lo descarta; ante la duda se aplica la prioridad más alta.",
+      "evidencia": ["B-602", "B-604", "INC-0140", "INC-0141"],
+      "impacto": "Ninguno sobre la convocatoria de brigadas. Si el aviso no salió, el cliente no se enteró de que la brigada va en camino, y lo mismo podría pasar en los próximos incidentes.",
+      "accion_recomendada": "El coordinador debe comprobar con el cliente si recibió el aviso de INC-0140 e INC-0141. Quien arma la ventana debe consultar en el historial de n8n las ejecuciones del evento confirmado de ambos incidentes e incluirlas en la exportación.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    }
+  ],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado en E-7401 y E-7402 hasta contratar el plan pago de Twilio; no es una falla."},
+    {"causa_catalogo": "NO_APLICA", "nota": "INC-0140 e INC-0141 se confirmaron dentro de su plazo de 5 min, y Verificar plazo en la API respondió sin error con accion: ninguna en ambas ejecuciones."}
+  ],
+  "alerta_coordinador": {
+    "enviar": true,
+    "canal_sugerido": "Llamada / Telegram",
+    "texto": "[ARKOF·Vigía] P2 Un brigadista no pudo abrir el enlace del correo y hubo confirmaciones por el portal; el correo salió tarde (92 y 75 s; meta 60 s); no hay constancia del aviso al cliente. Afecta: INC-0140, INC-0141 y próximos despachos. Haga ya: pida confirmar por el portal, llame a quien no responda y verifique con el cliente ambos avisos. Admin TI: revisar túnel y PUBLIC_BASE_URL, SMTP y cola de n8n."
+  },
+  "para_resumen_semanal": [
+    "F-04 en E-7401: Telegram de demostración rechazó el formato; en E-7402 el mismo nodo funcionó."
+  ],
+  "revision": {"revisor": "revisor-vigia", "veredicto": "APROBADO", "archivo": "memoria/revisiones/P-V-20261106-1530.md"}
+}

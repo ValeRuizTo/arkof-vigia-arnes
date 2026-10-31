@@ -1,0 +1,45 @@
+{
+  "parte_id": "P-V-20261104-1430",
+  "ventana_id": "V-20261104-1430",
+  "ventana_archivo": "casos/caso-03-correo-caido/ventana.json",
+  "generado_en": "2026-10-31T15:33:48Z",
+  "estado_global": "ROJO",
+  "prioridad_maxima": "P1",
+  "detectores_disparados": ["D4", "D8"],
+  "hallazgos": [
+    {
+      "causa_catalogo": "F-03",
+      "prioridad": "P1",
+      "resumen": "El correo, único canal de producción activo, falló con error 535 (credenciales no aceptadas) en las 4 ejecuciones de la ventana: 3 hacia brigadistas (E-7201, E-7202, E-7203) y 1 hacia el coordinador (E-7204). La falla es silenciosa: la app no ve ningún error (B-401 a B-404 con error_n8n nulo, salud.ok verdadero). Causa probable según el catálogo: contraseña de aplicación de Gmail revocada o vencida; la ventana no permite comprobarlo.",
+      "evidencia": ["E-7201", "E-7202", "E-7203", "E-7204", "INC-0120", "B-401", "B-402", "B-403", "B-404", "EV-1203", "EV-1205", "EV-1206", "EV-1208", "EV-1210", "EV-1211", "config.sms_habilitado", "salud"],
+      "impacto": "Las 16 convocatorias de INC-0120 (nivel 3, sustancia nociva cerca de una vereda; B-401 a B-403) salieron solo por Telegram, que es de demostración y requiere datos móviles. Al cierre de la ventana hay 1 confirmado (técnico, EV-1205) de 6 cupos requeridos, ningún líder. Las 2 rondas automáticas se agotaron y la decisión pasó al coordinador (EV-1211), cuyo correo también falló: su alerta solo salió por el Telegram de demostración (E-7204), sin prueba de que la recibiera, y la ventana no registra ninguna acción suya. Cualquier despacho nuevo quedará igual.",
+      "accion_recomendada": "Coordinador: llamar ya a los convocados de INC-0120, cubrir a mano los cupos que faltan (incluidos los 2 líderes) y avisar por teléfono cualquier despacho nuevo hasta que el correo funcione. Administrador: generar una nueva contraseña de aplicación de Gmail, actualizar la credencial SMTP en n8n y confirmar con el siguiente despacho que el nodo de correo ya no devuelve 535. Todo requiere aprobación y ejecución humanas.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    },
+    {
+      "causa_catalogo": "NUEVA",
+      "prioridad": "P2",
+      "resumen": "La ronda 2 de INC-0120 convocó 3 brigadistas (EV-1209, B-403) cuando la ventana da un déficit de 5: 6 cupos requeridos (EV-1203), 1 confirmado (EV-1205) y las 5 convocatorias de la ronda 1 vencidas sin respuesta (B-402, EV-1208). Las 16 convocatorias cuadran con 1 confirmación y 15 vencimientos (EV-1206, EV-1208, EV-1210), así que no falta ninguna respuesta que lo explique, y no hay ALERTA_RECURSOS. La ventana no permite saber si es falta de personal disponible o un déficit mal calculado.",
+      "evidencia": ["INC-0120", "B-402", "B-403", "EV-1203", "EV-1205", "EV-1206", "EV-1207", "EV-1208", "EV-1209", "EV-1210"],
+      "impacto": "La reasignación automática puede quedarse corta: en INC-0120, 2 de los 5 cupos faltantes no se volvieron a convocar en la ronda 2 y nada lo avisó. Es independiente de la caída del correo, que puede explicar por qué no responden, pero no cuántos se convocan. Si se repite, una emergencia recibiría menos brigadistas de los necesarios aun con el correo funcionando.",
+      "accion_recomendada": "Coordinador: al cubrir INC-0120 a mano, contar los 5 cupos faltantes y no los 3 de la última ronda, y comprobar si hay personal disponible. Administrador: revisar con los registros del motor de despacho por qué la ronda 2 calculó 3. Todo requiere aprobación y ejecución humanas.",
+      "requiere_aprobacion_humana": true,
+      "es_recurrente": false
+    }
+  ],
+  "comportamientos_esperados": [
+    {"causa_catalogo": "F-07", "nota": "SMS desactivado en E-7201 a E-7204 (config.sms_habilitado = false) hasta contratar el plan pago de Twilio; no es una falla, pero deja al correo como único canal de producción."},
+    {"causa_catalogo": "Telegram demostración", "nota": "Telegram funcionó en las 4 ejecuciones (config.telegram_demo = true), pero es de demostración y no cuenta como canal de producción; su éxito no compensa la caída del correo."},
+    {"causa_catalogo": "Ciclo del plazo", "nota": "La verificación del plazo respondió sin error en E-7201, E-7202 y E-7203, e INC-0120 no quedó atascado: hubo SLA_VENCIDO y escalamiento humano (EV-1206, EV-1208, EV-1210, EV-1211). No aparece F-02. El tamaño de la ronda 2 se reporta aparte como hallazgo."}
+  ],
+  "alerta_coordinador": {
+    "enviar": true,
+    "canal_sugerido": "Llamada telefónica / Telegram",
+    "texto": "[ARKOF·Vigía] P1 Las brigadas y usted no están recibiendo el correo de convocatoria y alertas. Afecta: INC-0120 (nivel 3, 1 de 6 cupos confirmado, sin líder; ya le toca decidir) y próximos despachos. Haga ya: llame a los convocados de INC-0120, cubra a mano los cupos y avise por teléfono los despachos nuevos. La ronda 2 convocó solo 3 de 5 cupos faltantes: cuente los 5. Admin TI: renovar la contraseña de aplicación de Gmail y actualizarla en n8n."
+  },
+  "para_resumen_semanal": [
+    "B-404 registra destinatarios = 0 en el evento alerta_coordinador, aunque E-7204 sí ejecutó los nodos hacia el coordinador. Sin efecto visible; revisar si ese campo solo cuenta brigadistas."
+  ],
+  "revision": {"revisor": "revisor-vigia", "veredicto": "APROBADO", "archivo": "memoria/revisiones/P-V-20261104-1430.md"}
+}
