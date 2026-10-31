@@ -1,0 +1,132 @@
+{
+  "ventana": {
+    "id": "V-20261028-1100",
+    "desde": "2026-10-28T11:00:00Z",
+    "hasta": "2026-10-28T11:15:00Z",
+    "entorno": "piloto",
+    "descripcion": "Ejemplo resuelto para el agente."
+  },
+  "config": {
+    "n8n_configurado": true,
+    "sms_habilitado": false,
+    "telegram_demo": true,
+    "vigilante_sla": false,
+    "public_base_url": "https://arkof-piloto.ngrok-free.app",
+    "sla_demo_min": null
+  },
+  "salud": {
+    "ok": true,
+    "n8n": true
+  },
+  "incidentes": [
+    {
+      "codigo": "INC-0090",
+      "tipo": "DERRAME_HIDROCARBURO",
+      "nivel": 1,
+      "municipio": "Guamal",
+      "estado": "confirmado",
+      "reportado_en": "2026-10-28T11:01:40Z",
+      "notificado_en": "2026-10-28T11:01:40Z",
+      "confirmado_en": "2026-10-28T11:04:40Z",
+      "sla_minutos": 5
+    }
+  ],
+  "bandeja": [
+    {
+      "id": "B-101",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0090",
+      "emitido_en": "2026-10-28T11:01:40Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 2,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/fd6_660835ae",
+        "https://arkof-piloto.ngrok-free.app/confirmar/822_97d8c8f5"
+      ]
+    },
+    {
+      "id": "B-102",
+      "evento": "confirmado",
+      "incidente_codigo": "INC-0090",
+      "emitido_en": "2026-10-28T11:04:40Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 2,
+      "enlaces": []
+    }
+  ],
+  "ejecuciones_n8n": [
+    {
+      "id": "E-6901",
+      "evento": "despacho",
+      "incidente": "INC-0090",
+      "inicio": "2026-10-28T11:01:40Z",
+      "fin": "2026-10-28T11:06:40Z",
+      "estado": "success",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-10-28T11:01:40Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-10-28T11:01:40Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-10-28T11:01:40Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "error",
+          "fin": "2026-10-28T11:01:42Z",
+          "error": "400 Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 188"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "success",
+          "fin": "2026-10-28T11:01:44Z"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "success",
+          "fin": "2026-10-28T11:06:40Z"
+        },
+        {
+          "nodo": "Verificar plazo en la API",
+          "estado": "success",
+          "fin": "2026-10-28T11:06:40Z",
+          "respuesta": {
+            "accion": "ninguna"
+          }
+        }
+      ]
+    }
+  ],
+  "bitacora": [
+    {
+      "id": "EV-0901",
+      "incidente": "INC-0090",
+      "momento": "2026-10-28T11:01:40Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado en n8n"
+    },
+    {
+      "id": "EV-0902",
+      "incidente": "INC-0090",
+      "momento": "2026-10-28T11:04:40Z",
+      "actor": "sistema",
+      "tipo": "BRIGADA_CONFIRMADA",
+      "detalle": "Brigada completa"
+    }
+  ]
+}

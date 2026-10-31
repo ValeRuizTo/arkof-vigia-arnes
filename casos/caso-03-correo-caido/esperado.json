@@ -1,0 +1,14 @@
+{
+  "estado_global": "ROJO",
+  "prioridad_maxima": "P1",
+  "causas_raiz": [
+    "F-03"
+  ],
+  "causas_prohibidas": [
+    "F-07"
+  ],
+  "max_hallazgos": 2,
+  "debe_enviar_alerta": true,
+  "canal_alerta_prohibido": "correo",
+  "nota": "El correo es el único canal de producción activo (SMS desactivado) y falla por credenciales: los brigadistas no reciben la convocatoria y la alerta al coordinador tampoco sale por correo. La alerta debe sugerir un canal que funcione."
+}

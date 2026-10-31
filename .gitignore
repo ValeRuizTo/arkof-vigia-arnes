@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+
+# Estado interno del hook de verificación (contador de reintentos)
+.claude/hooks/.intentos.json
+
+# Configuración personal de Claude Code (no se comparte)
+.claude/settings.local.json
+
+# Secretos (Vigía nunca los necesita)
+.env

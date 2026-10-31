@@ -1,0 +1,297 @@
+{
+  "ventana": {
+    "id": "V-20261103-0800",
+    "desde": "2026-11-03T08:00:00Z",
+    "hasta": "2026-11-03T08:15:00Z",
+    "entorno": "piloto",
+    "descripcion": "Turno de la mañana, dos incidentes atendidos."
+  },
+  "config": {
+    "n8n_configurado": true,
+    "sms_habilitado": false,
+    "telegram_demo": true,
+    "vigilante_sla": false,
+    "public_base_url": "https://arkof-piloto.ngrok-free.app",
+    "sla_demo_min": null
+  },
+  "salud": {
+    "ok": true,
+    "n8n": true
+  },
+  "incidentes": [
+    {
+      "codigo": "INC-0101",
+      "tipo": "DERRAME_HIDROCARBURO",
+      "nivel": 1,
+      "municipio": "Acacías",
+      "estado": "confirmado",
+      "reportado_en": "2026-11-03T08:02:10Z",
+      "notificado_en": "2026-11-03T08:02:10Z",
+      "confirmado_en": "2026-11-03T08:05:10Z",
+      "sla_minutos": 5
+    },
+    {
+      "codigo": "INC-0102",
+      "tipo": "SUSTANCIA_NOCIVA",
+      "nivel": 2,
+      "municipio": "Puerto López",
+      "estado": "notificado",
+      "reportado_en": "2026-11-03T08:10:50Z",
+      "notificado_en": "2026-11-03T08:10:50Z",
+      "sla_minutos": 5
+    }
+  ],
+  "bandeja": [
+    {
+      "id": "B-201",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0101",
+      "emitido_en": "2026-11-03T08:02:10Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 2,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/7ad_0906f28d",
+        "https://arkof-piloto.ngrok-free.app/confirmar/60e_19a256e3"
+      ]
+    },
+    {
+      "id": "B-202",
+      "evento": "confirmado",
+      "incidente_codigo": "INC-0101",
+      "emitido_en": "2026-11-03T08:05:10Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 2,
+      "enlaces": []
+    },
+    {
+      "id": "B-203",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0102",
+      "emitido_en": "2026-11-03T08:10:50Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 5,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/6c0_d69f370a",
+        "https://arkof-piloto.ngrok-free.app/confirmar/f9f_06364831",
+        "https://arkof-piloto.ngrok-free.app/confirmar/748_b959e0ee",
+        "https://arkof-piloto.ngrok-free.app/confirmar/9a0_065b345f",
+        "https://arkof-piloto.ngrok-free.app/confirmar/4ae_e5086c1b"
+      ]
+    }
+  ],
+  "ejecuciones_n8n": [
+    {
+      "id": "E-7001",
+      "evento": "despacho",
+      "incidente": "INC-0101",
+      "inicio": "2026-11-03T08:02:10Z",
+      "fin": "2026-11-03T08:07:10Z",
+      "estado": "success",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-03T08:02:10Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-03T08:02:10Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-11-03T08:02:10Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "success",
+          "fin": "2026-11-03T08:02:12Z"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "success",
+          "fin": "2026-11-03T08:02:14Z"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "success",
+          "fin": "2026-11-03T08:07:10Z"
+        },
+        {
+          "nodo": "Verificar plazo en la API",
+          "estado": "success",
+          "fin": "2026-11-03T08:07:10Z",
+          "respuesta": {
+            "accion": "ninguna"
+          }
+        }
+      ]
+    },
+    {
+      "id": "E-7002",
+      "evento": "confirmado",
+      "incidente": "INC-0101",
+      "inicio": "2026-11-03T08:05:10Z",
+      "fin": "2026-11-03T08:05:13Z",
+      "estado": "success",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-03T08:05:10Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-03T08:05:10Z"
+        },
+        {
+          "nodo": "Aviso al cliente: brigada en camino",
+          "estado": "success",
+          "fin": "2026-11-03T08:05:13Z"
+        }
+      ]
+    },
+    {
+      "id": "E-7003",
+      "evento": "despacho",
+      "incidente": "INC-0102",
+      "inicio": "2026-11-03T08:10:50Z",
+      "fin": null,
+      "estado": "waiting",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-03T08:10:50Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-03T08:10:50Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-11-03T08:10:50Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "success",
+          "fin": "2026-11-03T08:10:52Z"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "success",
+          "fin": "2026-11-03T08:10:54Z"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "waiting"
+        }
+      ]
+    }
+  ],
+  "bitacora": [
+    {
+      "id": "EV-1001",
+      "incidente": "INC-0101",
+      "momento": "2026-11-03T08:02:10Z",
+      "actor": "coordinador",
+      "tipo": "REPORTE",
+      "detalle": "Reporte registrado por el coordinador (canal telefónico)"
+    },
+    {
+      "id": "EV-1002",
+      "incidente": "INC-0101",
+      "momento": "2026-11-03T08:02:10Z",
+      "actor": "sistema",
+      "tipo": "CLASIFICACION",
+      "detalle": "Nivel 1"
+    },
+    {
+      "id": "EV-1003",
+      "incidente": "INC-0101",
+      "momento": "2026-11-03T08:02:10Z",
+      "actor": "sistema",
+      "tipo": "ASIGNACION",
+      "detalle": "Brigada propuesta: 1 líder y 1 técnico"
+    },
+    {
+      "id": "EV-1004",
+      "incidente": "INC-0101",
+      "momento": "2026-11-03T08:02:10Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado en n8n"
+    },
+    {
+      "id": "EV-1005",
+      "incidente": "INC-0101",
+      "momento": "2026-11-03T08:04:10Z",
+      "actor": "brigadista:3",
+      "tipo": "RESPUESTA_BRIGADISTA",
+      "detalle": "Confirma (líder)"
+    },
+    {
+      "id": "EV-1006",
+      "incidente": "INC-0101",
+      "momento": "2026-11-03T08:05:10Z",
+      "actor": "brigadista:7",
+      "tipo": "RESPUESTA_BRIGADISTA",
+      "detalle": "Confirma (técnico)"
+    },
+    {
+      "id": "EV-1007",
+      "incidente": "INC-0101",
+      "momento": "2026-11-03T08:05:10Z",
+      "actor": "sistema",
+      "tipo": "BRIGADA_CONFIRMADA",
+      "detalle": "Brigada completa"
+    },
+    {
+      "id": "EV-1008",
+      "incidente": "INC-0102",
+      "momento": "2026-11-03T08:10:50Z",
+      "actor": "coordinador",
+      "tipo": "REPORTE",
+      "detalle": "Reporte registrado"
+    },
+    {
+      "id": "EV-1009",
+      "incidente": "INC-0102",
+      "momento": "2026-11-03T08:10:50Z",
+      "actor": "sistema",
+      "tipo": "CLASIFICACION",
+      "detalle": "Nivel 2"
+    },
+    {
+      "id": "EV-1010",
+      "incidente": "INC-0102",
+      "momento": "2026-11-03T08:10:50Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado en n8n"
+    },
+    {
+      "id": "EV-1011",
+      "incidente": "INC-0102",
+      "momento": "2026-11-03T08:13:40Z",
+      "actor": "brigadista:5",
+      "tipo": "RESPUESTA_BRIGADISTA",
+      "detalle": "Confirma (líder)"
+    }
+  ]
+}

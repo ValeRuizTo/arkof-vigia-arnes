@@ -1,0 +1,261 @@
+{
+  "ventana": {
+    "id": "V-20261106-1530",
+    "desde": "2026-11-06T15:30:00Z",
+    "hasta": "2026-11-06T16:00:00Z",
+    "entorno": "piloto",
+    "descripcion": "Tarde con dos incidentes; se cambió de equipo el servidor de la app."
+  },
+  "config": {
+    "n8n_configurado": true,
+    "sms_habilitado": false,
+    "telegram_demo": true,
+    "vigilante_sla": false,
+    "public_base_url": "http://localhost:5000",
+    "sla_demo_min": null
+  },
+  "salud": {
+    "ok": true,
+    "n8n": true
+  },
+  "incidentes": [
+    {
+      "codigo": "INC-0140",
+      "tipo": "DERRAME_HIDROCARBURO",
+      "nivel": 1,
+      "municipio": "Cumaral",
+      "estado": "confirmado",
+      "reportado_en": "2026-11-06T15:40:00Z",
+      "notificado_en": "2026-11-06T15:40:00Z",
+      "confirmado_en": "2026-11-06T15:43:50Z",
+      "sla_minutos": 5
+    },
+    {
+      "codigo": "INC-0141",
+      "tipo": "DERRAME_HIDROCARBURO",
+      "nivel": 2,
+      "municipio": "Restrepo",
+      "estado": "confirmado",
+      "reportado_en": "2026-11-06T15:50:00Z",
+      "notificado_en": "2026-11-06T15:50:00Z",
+      "confirmado_en": "2026-11-06T15:54:10Z",
+      "sla_minutos": 5
+    }
+  ],
+  "bandeja": [
+    {
+      "id": "B-601",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0140",
+      "emitido_en": "2026-11-06T15:40:00Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 2,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/ca5_2b9ae7d5",
+        "https://arkof-piloto.ngrok-free.app/confirmar/08d_4e362de6"
+      ]
+    },
+    {
+      "id": "B-602",
+      "evento": "confirmado",
+      "incidente_codigo": "INC-0140",
+      "emitido_en": "2026-11-06T15:43:50Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 2,
+      "enlaces": []
+    },
+    {
+      "id": "B-603",
+      "evento": "despacho",
+      "incidente_codigo": "INC-0141",
+      "emitido_en": "2026-11-06T15:50:00Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 5,
+      "enlaces": [
+        "https://arkof-piloto.ngrok-free.app/confirmar/6d7_12da013e",
+        "https://arkof-piloto.ngrok-free.app/confirmar/e5a_5b4b7030",
+        "https://arkof-piloto.ngrok-free.app/confirmar/65f_2a36a7ce",
+        "https://arkof-piloto.ngrok-free.app/confirmar/b38_34be2f25",
+        "https://arkof-piloto.ngrok-free.app/confirmar/bdb_a9749141"
+      ]
+    },
+    {
+      "id": "B-604",
+      "evento": "confirmado",
+      "incidente_codigo": "INC-0141",
+      "emitido_en": "2026-11-06T15:54:10Z",
+      "canal": "n8n",
+      "error_n8n": null,
+      "destinatarios": 2,
+      "enlaces": []
+    }
+  ],
+  "ejecuciones_n8n": [
+    {
+      "id": "E-7401",
+      "evento": "despacho",
+      "incidente": "INC-0140",
+      "inicio": "2026-11-06T15:40:00Z",
+      "fin": "2026-11-06T15:45:00Z",
+      "estado": "success",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-06T15:40:00Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-06T15:40:00Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-11-06T15:40:00Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "error",
+          "fin": "2026-11-06T15:40:02Z",
+          "error": "400 Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 212"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "success",
+          "fin": "2026-11-06T15:41:32Z"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "success",
+          "fin": "2026-11-06T15:45:00Z"
+        },
+        {
+          "nodo": "Verificar plazo en la API",
+          "estado": "success",
+          "fin": "2026-11-06T15:45:00Z",
+          "respuesta": {
+            "accion": "ninguna"
+          }
+        }
+      ]
+    },
+    {
+      "id": "E-7402",
+      "evento": "despacho",
+      "incidente": "INC-0141",
+      "inicio": "2026-11-06T15:50:00Z",
+      "fin": "2026-11-06T15:55:00Z",
+      "estado": "success",
+      "nodos": [
+        {
+          "nodo": "Evento ARKOF",
+          "estado": "success",
+          "fin": "2026-11-06T15:50:00Z"
+        },
+        {
+          "nodo": "Tipo de evento",
+          "estado": "success",
+          "fin": "2026-11-06T15:50:00Z"
+        },
+        {
+          "nodo": "Un ítem por brigadista",
+          "estado": "success",
+          "fin": "2026-11-06T15:50:00Z"
+        },
+        {
+          "nodo": "Telegram al brigadista (demostración)",
+          "estado": "success",
+          "fin": "2026-11-06T15:50:02Z"
+        },
+        {
+          "nodo": "Correo al brigadista",
+          "estado": "success",
+          "fin": "2026-11-06T15:51:15Z"
+        },
+        {
+          "nodo": "SMS al brigadista",
+          "estado": "disabled"
+        },
+        {
+          "nodo": "Esperar plazo de confirmación",
+          "estado": "success",
+          "fin": "2026-11-06T15:55:00Z"
+        },
+        {
+          "nodo": "Verificar plazo en la API",
+          "estado": "success",
+          "fin": "2026-11-06T15:55:00Z",
+          "respuesta": {
+            "accion": "ninguna"
+          }
+        }
+      ]
+    }
+  ],
+  "bitacora": [
+    {
+      "id": "EV-1401",
+      "incidente": "INC-0140",
+      "momento": "2026-11-06T15:40:00Z",
+      "actor": "coordinador",
+      "tipo": "REPORTE",
+      "detalle": "Reporte registrado"
+    },
+    {
+      "id": "EV-1402",
+      "incidente": "INC-0140",
+      "momento": "2026-11-06T15:40:00Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado en n8n"
+    },
+    {
+      "id": "EV-1403",
+      "incidente": "INC-0140",
+      "momento": "2026-11-06T15:43:50Z",
+      "actor": "brigadista:4",
+      "tipo": "RESPUESTA_BRIGADISTA",
+      "detalle": "Confirma desde el portal (no pudo abrir el enlace del correo)"
+    },
+    {
+      "id": "EV-1404",
+      "incidente": "INC-0140",
+      "momento": "2026-11-06T15:43:50Z",
+      "actor": "sistema",
+      "tipo": "BRIGADA_CONFIRMADA",
+      "detalle": "Brigada completa"
+    },
+    {
+      "id": "EV-1405",
+      "incidente": "INC-0141",
+      "momento": "2026-11-06T15:50:00Z",
+      "actor": "coordinador",
+      "tipo": "REPORTE",
+      "detalle": "Reporte registrado"
+    },
+    {
+      "id": "EV-1406",
+      "incidente": "INC-0141",
+      "momento": "2026-11-06T15:50:00Z",
+      "actor": "sistema",
+      "tipo": "NOTIFICACION",
+      "detalle": "Evento despacho publicado en n8n"
+    },
+    {
+      "id": "EV-1407",
+      "incidente": "INC-0141",
+      "momento": "2026-11-06T15:54:10Z",
+      "actor": "sistema",
+      "tipo": "BRIGADA_CONFIRMADA",
+      "detalle": "Brigada completa (confirmaciones por el portal)"
+    }
+  ]
+}

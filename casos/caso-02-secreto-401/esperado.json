@@ -1,0 +1,16 @@
+{
+  "estado_global": "ROJO",
+  "prioridad_maxima": "P1",
+  "causas_raiz": [
+    "F-02"
+  ],
+  "causas_prohibidas": [
+    "F-07"
+  ],
+  "max_hallazgos": 2,
+  "debe_enviar_alerta": true,
+  "evidencia_obligatoria": [
+    "INC-0110"
+  ],
+  "nota": "El 401 en la verificación rompe el escalamiento: INC-0110 lleva 18 min sin que nadie reemplace al que rechazó ni a los que no respondieron. Una sola causa raíz."
+}
